@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OpenSteps — Wireframes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Gloria+Hallelujah&family=Kalam:wght@300;400;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2" />
+        <path d="M10 22 L16 28 L30 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+      <div>
+        <div class="brand-name">OpenSteps</div>
+        <div class="brand-sub">Wireframes · v1 · Apr 2026</div>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <div class="topbar-meta">
+      <span class="chip">Sierra Leone · Register a Business</span>
+    </div>
+  </header>
+
+  <main id="stage" class="stage"></main>
+
+  <aside id="tweaks" class="tweaks" aria-label="Tweaks">
+    <div class="tweaks-head">
+      <span>Tweaks</span>
+      <button id="tweaks-close" aria-label="Close">×</button>
+    </div>
+    <div class="tweaks-body">
+      <label class="tw-row">
+        <span>Fidelity</span>
+        <select id="tw-fidelity">
+          <option value="sketchy">Sketchy (hand-drawn)</option>
+          <option value="crisp">Crisp low-fi</option>
+        </select>
+      </label>
+      <label class="tw-row">
+        <span>Annotations</span>
+        <select id="tw-annotations">
+          <option value="on">Show</option>
+          <option value="off">Hide</option>
+        </select>
+      </label>
+      <label class="tw-row">
+        <span>Accent</span>
+        <select id="tw-accent">
+          <option value="ink">Ink only (mono)</option>
+          <option value="marigold">Marigold</option>
+          <option value="teal">Teal</option>
+          <option value="coral">Coral</option>
+        </select>
+      </label>
+      <label class="tw-row">
+        <span>Density</span>
+        <select id="tw-density">
+          <option value="roomy">Roomy</option>
+          <option value="compact">Compact</option>
+        </select>
+      </label>
+      <label class="tw-row">
+        <span>Form factor</span>
+        <select id="tw-form">
+          <option value="both">Mobile + Desktop</option>
+          <option value="mobile">Mobile only</option>
+          <option value="desktop">Desktop only</option>
+        </select>
+      </label>
+    </div>
+    <div class="tweaks-foot">Toggle from the toolbar to hide.</div>
+  </aside>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"
+    integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"
+    integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"
+    integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y"
+    crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="primitives.jsx"></script>
+  <script type="text/babel" src="screens/home.jsx"></script>
+  <script type="text/babel" src="screens/guide.jsx"></script>
+  <script type="text/babel" src="screens/contribute.jsx"></script>
+  <script type="text/babel" src="screens/verify.jsx"></script>
+  <script type="text/babel" src="screens/evidence.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+
+</html>
