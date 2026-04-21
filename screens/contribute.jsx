@@ -5,13 +5,13 @@ const WIZARD_STEPS = [
 ];
 
 const BUILT_SO_FAR = [
-  { done: true,  text: 'Process: Register a business · Sierra Leone' },
-  { done: true,  text: 'Step 1: Reserve name at CAC (1 day)' },
-  { done: true,  text: 'Step 2: Fill Form A (download or collect)' },
+  { done: true, text: 'Process: Register a business · Sierra Leone' },
+  { done: true, text: 'Step 1: Reserve name at CAC (1 day)' },
+  { done: true, text: 'Step 2: Fill Form A (download or collect)' },
   { done: false, text: 'Step 3: Payment — in progress…' },
 ];
 
-const DETECTED = ['CAC Freetown','Rokel Bank','Form A','Le 10k + Le 50k','~2 days','Yellow receipt'];
+const DETECTED = ['CAC Freetown', 'Rokel Bank', 'Form A', 'Le 10k + Le 50k', '~2 days', 'Yellow receipt'];
 
 function ContributeScreen() {
   return (
@@ -96,7 +96,7 @@ function ContributeScreen() {
 
                 {/* Progress dots */}
                 <div className="row" style={{ justifyContent: 'center', gap: 6 }}>
-                  {[1,2,3,4,5,6,7,8,9,10].map(i => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
                     <div key={i} style={{
                       width: 16, height: 5, borderRadius: 999,
                       background: i <= 4 ? 'var(--accent)' : 'var(--surface-3)',
@@ -115,9 +115,9 @@ function ContributeScreen() {
                 <Label>Previous answers</Label>
                 <div className="col" style={{ gap: 6 }}>
                   {[
-                    ['What's the first thing you did?', 'Reserved the name online at CAC portal — took about 1 day.'],
-                    ['Did you pay anything to reserve it?', 'Yes, Le 10,000 at the CAC counter.'],
-                    ['How did you fill Form A?', 'Downloaded from CAC website, printed and filled at home.'],
+                    ["What's the first thing you did?", "Reserved the name online at CAC portal — took about 1 day."],
+                    ["Did you pay anything to reserve it?", "Yes, Le 10,000 at the CAC counter."],
+                    ["How did you fill Form A?", "Downloaded from CAC website, printed and filled at home."],
                   ].map(([q, a], i) => (
                     <div key={i}>
                       <div style={{ fontSize: 12, color: 'var(--text-3)', fontStyle: 'italic' }}>{q}</div>
@@ -180,7 +180,7 @@ function ContributeScreen() {
               <div className="between">
                 <div className="small mono" style={{ fontWeight: 600 }}>STEP 3 · PAYMENT</div>
                 <div className="row" style={{ gap: 4 }}>
-                  {[1,2,3,4,5,6,7].map(i => (
+                  {[1, 2, 3, 4, 5, 6, 7].map(i => (
                     <div key={i} style={{ width: 20, height: 4, borderRadius: 999, background: i <= 3 ? 'var(--accent)' : 'var(--surface-3)' }} />
                   ))}
                 </div>
@@ -209,7 +209,7 @@ function ContributeScreen() {
               <Box soft style={{ fontSize: 12 }}>
                 <Label>Built so far</Label>
                 <div className="col mt-1" style={{ gap: 3 }}>
-                  {BUILT_SO_FAR.slice(0,3).map((item, i) => (
+                  {BUILT_SO_FAR.slice(0, 3).map((item, i) => (
                     <div key={i} className="row" style={{ gap: 6 }}>
                       <span>{item.done ? '✓' : '…'}</span>
                       <span style={{ color: item.done ? 'var(--text)' : 'var(--text-3)' }}>{item.text}</span>
@@ -249,10 +249,10 @@ function ContributeScreen() {
               {/* Step table */}
               <div className="col" style={{ gap: 8 }}>
                 {[
-                  { n:1, title:'Reserve a business name',    where:'CAC · online', fee:'Le 10,000', att:'receipt.jpg',    has:true  },
-                  { n:2, title:'Fill Form A',                where:'CAC · download', fee:'—',         att:'form-a.pdf',   has:true  },
-                  { n:3, title:'Pay filing fee at bank',     where:'Any commercial bank', fee:'Le 50,000', att:'receipt.jpg', has:true },
-                  { n:4, title:'Submit form at CAC counter', where:'CAC Counter 3', fee:'—',         att:null,           has:false },
+                  { n: 1, title: 'Reserve a business name', where: 'CAC · online', fee: 'Le 10,000', att: 'receipt.jpg', has: true },
+                  { n: 2, title: 'Fill Form A', where: 'CAC · download', fee: '—', att: 'form-a.pdf', has: true },
+                  { n: 3, title: 'Pay filing fee at bank', where: 'Any commercial bank', fee: 'Le 50,000', att: 'receipt.jpg', has: true },
+                  { n: 4, title: 'Submit form at CAC counter', where: 'CAC Counter 3', fee: '—', att: null, has: false },
                 ].map((s) => (
                   <Box key={s.n} style={{ padding: '10px 14px' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '28px 1fr 180px 140px 120px', gap: 10, alignItems: 'center' }}>
