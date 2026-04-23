@@ -1,0 +1,15 @@
+{
+  "name": "opensteps",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter webapp dev",
+    "dev:mobile": "pnpm --filter mobile start",
+    "build:web": "pnpm --filter webapp build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}

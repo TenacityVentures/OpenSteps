@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Next.js
+webapp/.next/
+webapp/out/
+
+# Expo / React Native
+mobile/.expo/
+mobile/dist/
+mobile/build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Supabase generated types (regenerate via: supabase gen types typescript)
+packages/supabase/src/database.types.ts
