@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── OpenSteps design tokens → Tailwind v4 theme ──────────────────────── */
+
+  /* Colours — warm paper palette */
+  --color-bg:       #f7f3eb;
+  --color-surface:  #ffffff;
+  --color-surface2: #f3eee4;
+  --color-surface3: #ebe4d5;
+
+  /* Text */
+  --color-ink:   #14120c;
+  --color-ink-2: #3d372c;
+  --color-ink-3: #7a7363;
+  --color-ink-4: #a9a292;
+
+  /* Brand green (Sierra Leone civic) */
+  --color-green:      #1a6b43;
+  --color-green-mid:  #228357;
+  --color-green-deep: #0f4a2d;
+  --color-green-soft: #deecdf;
+  --color-green-tint: #eaf3ec;
+
+  /* Accent (marigold sun) */
+  --color-amber:      #d5821a;
+  --color-amber-soft: #fbecd0;
+
+  /* Semantic */
+  --color-red:      #b8342a;
+  --color-red-soft: #fbe0dc;
+  --color-blue:     #24557d;
+  --color-blue-soft: #e2ecf5;
+
+  /* Typography */
+  --font-sans:  var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-instrument-serif), 'EB Garamond', Georgia, serif;
+  --font-mono:  var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Spacing */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 32px;
+  --spacing-8: 40px;
+  --spacing-9: 56px;
+
+  /* Border radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius:    8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(20,18,12,0.06);
+  --shadow-sm: 0 2px 6px rgba(20,18,12,0.08), 0 1px 2px rgba(20,18,12,0.04);
+  --shadow:    0 4px 12px rgba(20,18,12,0.10), 0 2px 4px rgba(20,18,12,0.06);
+  --shadow-lg: 0 8px 28px rgba(20,18,12,0.12), 0 4px 8px rgba(20,18,12,0.06);
+}
+
+/* Base styles */
+html {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prose defaults */
+h1, h2, h3, h4, h5, h6 { font-weight: 600; line-height: 1.25; }
