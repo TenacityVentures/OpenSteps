@@ -7,6 +7,7 @@ import { useGuides } from '@/hooks/useGuides';
 import { useCategories } from '@/hooks/useCategories';
 import { useFeed } from '@/hooks/useFeed';
 import { SearchBar } from '@/components/home/SearchBar';
+import { Logo } from '@/components/ui/Logo';
 import { CategoryGrid } from '@/components/home/CategoryGrid';
 import { GuideCard } from '@/components/home/GuideCard';
 import { FeedItem } from '@/components/home/FeedItem';
@@ -78,7 +79,7 @@ export default function HomeScreen() {
           if (item.type === 'search') {
             return (
               <View style={styles.searchWrap}>
-                <Text style={styles.logo}>OpenSteps</Text>
+                <Logo variant="wordmark" size={28} />
                 <SearchBar value={query} onChangeText={setQuery} />
               </View>
             );
@@ -145,12 +146,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
     gap: 12,
-  },
-  logo: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 20,
-    color: '#1A6B43',
-    letterSpacing: -0.5,
   },
   section: {
     paddingHorizontal: 16,

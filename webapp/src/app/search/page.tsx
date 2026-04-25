@@ -19,7 +19,7 @@ export default async function SearchPage({ searchParams }: Props) {
           {q ? `Results for "${q}"` : 'Search guides'}
         </h1>
         {q && (
-          <p className="text-sm text-[--color-ink-3] mt-1">
+          <p className="text-sm text-[var(--color-ink-3)] mt-1">
             {guides.length} guide{guides.length !== 1 ? 's' : ''} found
           </p>
         )}
@@ -27,9 +27,9 @@ export default async function SearchPage({ searchParams }: Props) {
       {guides.length > 0 ? (
         <GuideList guides={guides} />
       ) : q ? (
-        <p className="text-[--color-ink-3]">
+        <p className="text-[var(--color-ink-3)]">
           No guides match &ldquo;{q}&rdquo;. Try a different term or{' '}
-          <a href="/sl" className="text-[--color-green] underline">
+          <a href="/sl" className="text-[var(--color-green)] underline">
             browse by category
           </a>
           .

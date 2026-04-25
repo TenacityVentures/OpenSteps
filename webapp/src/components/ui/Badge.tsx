@@ -1,11 +1,11 @@
 type Variant = 'default' | 'ok' | 'warn' | 'err' | 'info';
 
 const STYLES: Record<Variant, string> = {
-  default: 'bg-[--color-surface2] text-[--color-ink-2] border-[--color-surface3]',
-  ok:      'bg-[--color-green-soft] text-[--color-green-deep] border-[--color-green-soft]',
-  warn:    'bg-[--color-amber-soft] text-amber-900 border-[--color-amber-soft]',
-  err:     'bg-[--color-red-soft] text-[--color-red] border-[--color-red-soft]',
-  info:    'bg-[--color-blue-soft] text-[--color-blue] border-[--color-blue-soft]',
+  default: 'bg-[var(--color-surface2)] text-[var(--color-ink-2)] border-[var(--color-surface3)]',
+  ok: 'bg-[var(--color-green-soft)] text-[var(--color-green-deep)] border-[var(--color-green-soft)]',
+  warn: 'bg-[var(--color-amber-soft)] text-amber-900 border-[var(--color-amber-soft)]',
+  err: 'bg-[--color-red-soft] text-[var(--color-red)] border-[--color-red-soft]',
+  info: 'bg-[var(--color-blue-soft)] text-[var(--color-blue)] border-[var(--color-blue-soft)]',
 };
 
 export default function Badge({

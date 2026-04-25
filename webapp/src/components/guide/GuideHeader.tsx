@@ -10,16 +10,16 @@ export default function GuideHeader({ guide }: { guide: Guide }) {
   return (
     <div className="space-y-4">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-mono text-[--color-ink-3]">
-        <a href="/sl" className="hover:text-[--color-green]">Sierra Leone</a>
+      <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-ink-3)]">
+        <a href="/sl" className="hover:text-[var(--color-green)]">Sierra Leone</a>
         <span>/</span>
-        <a href={`/sl/${guide.category}`} className="hover:text-[--color-green]">
+        <a href={`/sl/${guide.category}`} className="hover:text-[var(--color-green)]">
           {catMeta?.label ?? guide.category}
         </a>
       </div>
 
       {/* Title */}
-      <h1 className="font-serif text-4xl sm:text-5xl text-[--color-ink] leading-tight">
+      <h1 className="font-serif text-4xl sm:text-5xl text-[var(--color-ink)] leading-tight">
         {guide.title}
       </h1>
 
@@ -43,15 +43,15 @@ export default function GuideHeader({ guide }: { guide: Guide }) {
 
       {/* Trust score */}
       <div className="flex items-center gap-3 max-w-xs">
-        <div className="text-sm font-mono text-[--color-ink-3]">Trust</div>
+        <div className="text-sm font-mono text-[var(--color-ink-3)]">Trust</div>
         <TrustBar score={guide.trust_score} />
-        <div className="text-sm font-mono text-[--color-green] font-semibold">
+        <div className="text-sm font-mono text-[var(--color-green)] font-semibold">
           {formatTrustScore(guide.trust_score)}
         </div>
       </div>
 
       {guide.description && (
-        <p className="text-[--color-ink-2] max-w-2xl leading-relaxed">{guide.description}</p>
+        <p className="text-[var(--color-ink-2)] max-w-2xl leading-relaxed">{guide.description}</p>
       )}
     </div>
   );

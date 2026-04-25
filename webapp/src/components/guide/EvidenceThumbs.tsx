@@ -20,12 +20,12 @@ export default function EvidenceThumbs({
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-mono uppercase tracking-widest text-[--color-ink-3]">
+        <h2 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)]">
           Evidence · {evidence.length}
         </h2>
         <Link
           href={`/sl/${guideSlug}/evidence`}
-          className="text-xs text-[--color-green] hover:underline"
+          className="text-xs text-[var(--color-green)] hover:underline"
         >
           See all
         </Link>
@@ -34,7 +34,7 @@ export default function EvidenceThumbs({
         {shown.map((ev) => (
           <div
             key={ev.id}
-            className="aspect-square rounded-lg bg-[--color-surface2] border border-[--color-surface3] flex items-center justify-center text-2xl"
+            className="aspect-square rounded-lg bg-[var(--color-surface2)] border border-[var(--color-surface3)] flex items-center justify-center text-2xl"
           >
             {TYPE_ICON[ev.type] ?? '📎'}
           </div>
@@ -42,7 +42,7 @@ export default function EvidenceThumbs({
         {overflow > 0 && (
           <Link
             href={`/sl/${guideSlug}/evidence`}
-            className="aspect-square rounded-lg bg-[--color-surface3] border border-[--color-surface3] flex items-center justify-center text-sm font-mono text-[--color-ink-3] hover:bg-[--color-surface2] transition-colors"
+            className="aspect-square rounded-lg bg-[var(--color-surface3)] border border-[var(--color-surface3)] flex items-center justify-center text-sm font-mono text-[var(--color-ink-3)] hover:bg-[var(--color-surface2)] transition-colors"
           >
             +{overflow}
           </Link>

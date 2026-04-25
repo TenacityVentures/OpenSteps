@@ -7,10 +7,10 @@ export default function IntentMatcher() {
       {INTENTS.map((intent) => (
         <div
           key={intent.question}
-          className="p-4 rounded-xl bg-white border border-[--color-surface3] hover:border-[--color-green] hover:shadow-sm transition-all cursor-pointer group"
+          className="p-4 rounded-xl bg-white border border-[var(--color-surface3)] hover:border-[var(--color-green)] hover:shadow-sm transition-all cursor-pointer group"
         >
           <div className="text-2xl mb-2">{intent.icon}</div>
-          <div className="font-medium text-sm text-[--color-ink] group-hover:text-[--color-green] mb-3 transition-colors">
+          <div className="font-medium text-sm text-[var(--color-ink)] group-hover:text-[var(--color-green)] mb-3 transition-colors">
             {intent.question}
           </div>
           <ul className="space-y-1">
@@ -18,7 +18,7 @@ export default function IntentMatcher() {
               <li key={s}>
                 <Link
                   href={`/sl/${intent.slugs[i]}`}
-                  className="text-xs text-[--color-green] hover:underline flex items-center gap-1"
+                  className="text-xs text-[var(--color-green)] hover:underline flex items-center gap-1"
                 >
                   <span className="opacity-40">→</span>
                   {s}

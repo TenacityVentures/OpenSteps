@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${inter.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-screen bg-[--color-bg]">{children}</body>
+      <body className="min-h-screen bg-[var(--color-bg)]">{children}</body>
     </html>
   );
 }

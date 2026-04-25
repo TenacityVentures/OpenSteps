@@ -11,7 +11,7 @@ export default function StepList({
 }) {
   return (
     <section>
-      <h2 className="text-sm font-mono uppercase tracking-widest text-[--color-ink-3] mb-6">
+      <h2 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-6">
         Steps
       </h2>
       <ol className="space-y-6">
@@ -25,20 +25,20 @@ export default function StepList({
             >
               {/* Step indicator */}
               <div className="flex flex-col items-center">
-                <div className="w-9 h-9 rounded-full border-2 border-[--color-green] bg-white flex items-center justify-center text-sm font-mono font-bold text-[--color-green] shrink-0">
+                <div className="w-9 h-9 rounded-full border-2 border-[var(--color-green)] bg-white flex items-center justify-center text-sm font-mono font-bold text-[var(--color-green)] shrink-0">
                   {step.n}
                 </div>
                 {/* Connector line */}
-                <div className="w-px flex-1 mt-2 bg-[--color-surface3]" />
+                <div className="w-px flex-1 mt-2 bg-[var(--color-surface3)]" />
               </div>
 
               {/* Step content */}
               <div className="pb-6 min-w-0">
-                <h3 className="font-semibold text-[--color-ink] text-lg leading-snug mb-2">
+                <h3 className="font-semibold text-[var(--color-ink)] text-lg leading-snug mb-2">
                   {step.title}
                 </h3>
                 {step.description && (
-                  <p className="text-[--color-ink-2] leading-relaxed mb-3 text-sm">
+                  <p className="text-[var(--color-ink-2)] leading-relaxed mb-3 text-sm">
                     {step.description}
                   </p>
                 )}

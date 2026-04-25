@@ -9,7 +9,7 @@ export default function RelatedGuides({
   if (guides.length === 0) return null;
   return (
     <div>
-      <div className="text-xs font-mono uppercase tracking-widest text-[--color-ink-3] mb-2">
+      <div className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-2">
         Related
       </div>
       <ul className="space-y-1">
@@ -17,7 +17,7 @@ export default function RelatedGuides({
           <li key={g.id}>
             <Link
               href={`/sl/${g.slug}`}
-              className="text-sm text-[--color-ink-2] hover:text-[--color-green] transition-colors"
+              className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-green)] transition-colors"
             >
               {g.title}
             </Link>

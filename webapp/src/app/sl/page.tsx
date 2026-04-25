@@ -37,7 +37,7 @@ export default async function HomePage() {
 
       {/* Category grid */}
       <section>
-        <h2 className="text-sm font-mono uppercase tracking-widest text-[--color-ink-3] mb-4">
+        <h2 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-4">
           Browse by topic
         </h2>
         <CategoryGrid categories={categories} />
@@ -46,7 +46,7 @@ export default async function HomePage() {
       {/* Main two-column: guides + live feed */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
         <section>
-          <h2 className="text-sm font-mono uppercase tracking-widest text-[--color-ink-3] mb-4">
+          <h2 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-4">
             Most followed
           </h2>
           <GuideList guides={guides} />
@@ -55,21 +55,21 @@ export default async function HomePage() {
         <aside className="space-y-6">
           <LiveFeedRail initialFeed={feed} />
           <section>
-            <h3 className="text-sm font-mono uppercase tracking-widest text-[--color-ink-3] mb-3">
+            <h3 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-3">
               Top contributors
             </h3>
             <div className="space-y-2">
               {topVerifiers.map((v) => (
                 <div
                   key={v.id}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white border border-[--color-surface3]"
+                  className="flex items-center gap-3 p-3 rounded-lg bg-white border border-[var(--color-surface3)]"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[--color-green] text-white flex items-center justify-center text-xs font-bold flex-none">
+                  <div className="w-8 h-8 rounded-full bg-[var(--color-green)] text-white flex items-center justify-center text-xs font-bold flex-none">
                     {v.display_name[0]}
                   </div>
                   <div className="grow min-w-0">
                     <div className="font-semibold text-sm truncate">{v.display_name}</div>
-                    <div className="text-xs font-mono text-[--color-ink-3]">
+                    <div className="text-xs font-mono text-[var(--color-ink-3)]">
                       {v.verification_count} verified
                     </div>
                   </div>
@@ -78,7 +78,7 @@ export default async function HomePage() {
                       Editor
                     </span>
                   ) : (
-                    <span className="text-xs font-mono text-[--color-green] font-semibold">
+                    <span className="text-xs font-mono text-[var(--color-green)] font-semibold">
                       {v.accuracy_pct}%
                     </span>
                   )}

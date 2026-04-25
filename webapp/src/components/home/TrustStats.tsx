@@ -13,11 +13,11 @@ export default function TrustStats({ guides }: { guides: Guide[] }) {
         { label: 'Country', value: 'Sierra Leone' },
         { label: 'Language', value: 'English · Krio soon' },
       ].map(({ label, value }) => (
-        <div key={label} className="p-4 rounded-xl bg-white border border-[--color-surface3]">
-          <div className="text-xs font-mono uppercase tracking-widest text-[--color-ink-3]">
+        <div key={label} className="p-4 rounded-xl bg-white border border-[var(--color-surface3)]">
+          <div className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-3)]">
             {label}
           </div>
-          <div className="mt-1 font-serif text-2xl text-[--color-ink]">{value}</div>
+          <div className="mt-1 font-serif text-2xl text-[var(--color-ink)]">{value}</div>
         </div>
       ))}
     </div>
