@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { GuideDraft, StepDraft } from '../types';
 
 const input =
-  'px-2.5 py-1.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)/20] focus:border-[var(--color-green)] transition-colors';
+  'px-2.5 py-1.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
 interface Props {
   draft: GuideDraft;
@@ -149,7 +149,7 @@ export function StepsBuilderStep({ draft, updateDraft }: Props) {
                   Description
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)/20 focus:border-[var(--color-green)] transition-colors resize-none"
+                  className="w-full px-3 py-2 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors resize-none"
                   rows={3}
                   value={step.description}
                   onChange={(e) => patch(step.id, { description: e.target.value })}

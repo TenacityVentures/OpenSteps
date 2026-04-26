@@ -2,7 +2,7 @@ import type { GuideDraft } from '../types';
 
 const label = 'block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)] mb-1.5';
 const input =
-  'w-full px-3 py-2 bg-white border border-[var(--color-surface3)] rounded-[  var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)/20] focus:border-[var(--color-green)] transition-colors resize-none';
+  'w-full px-3 py-2 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors resize-none';
 
 interface Props {
   draft: GuideDraft;
@@ -12,7 +12,7 @@ interface Props {
 export function EvidenceStep({ draft, updateDraft }: Props) {
   return (
     <div className="space-y-6">
-      <p className="text-sm text-[--color-ink-3]">
+      <p className="text-sm text-[var(--color-ink-3)]">
         Evidence — receipts, forms, or photos — makes guides trustworthy. Describe what you have.
         After submission, an editor will contact you to collect the files.
       </p>

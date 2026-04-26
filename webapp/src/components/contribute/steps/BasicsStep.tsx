@@ -2,9 +2,21 @@ import type { CategoryKey } from '@opensteps/types';
 import { CATEGORIES } from '@opensteps/constants';
 import type { GuideDraft } from '../types';
 
-const label = 'block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)] mb-1.5';
-const input =
-  'w-full px-3 py-2 bg-white border border-[var(--color-surface3)] rounded-[var(  --radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)/20] focus:border-[var(--color-green)] transition-colors';
+const lbl = 'block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)] mb-1.5';
+const inp =
+  'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
+
+// Short display label for category chips
+const SHORT: Record<CategoryKey, string> = {
+  business: 'Business',
+  id: 'ID & docs',
+  transport: 'Transport',
+  health: 'Health',
+  education: 'Education',
+  tax: 'Tax',
+  property: 'Property',
+  travel: 'Travel',
+};
 
 interface Props {
   draft: GuideDraft;
@@ -13,74 +25,77 @@ interface Props {
 
 export function BasicsStep({ draft, updateDraft }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
       {/* Title — full width */}
-      <div className="col-span-2">
-        <label className={label}>Title</label>
+      <div className="sm:col-span-2">
+        <label className={lbl}>Title</label>
         <input
-          className={input}
+          className={inp}
           value={draft.title}
           onChange={(e) => updateDraft({ title: e.target.value })}
-          placeholder="Register a business"
+          placeholder="e.g. Register a small business"
           autoFocus
         />
       </div>
 
-      {/* Category */}
-      <div>
-        <label className={label}>Category</label>
-        <select
-          className={input}
-          value={draft.category}
-          onChange={(e) => updateDraft({ category: e.target.value as CategoryKey | '' })}
-        >
-          <option value="">Select category</option>
+      {/* Category — pill chips, full width */}
+      <div className="sm:col-span-2">
+        <label className={lbl}>Category</label>
+        <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((c) => (
-            <option key={c.key} value={c.key}>
-              {c.label}
-            </option>
+            <button
+              key={c.key}
+              type="button"
+              onClick={() => updateDraft({ category: c.key })}
+              className={[
+                'px-3 py-1.5 rounded-full text-sm border transition-colors',
+                draft.category === c.key
+                  ? 'bg-[var(--color-green)] text-white border-[var(--color-green)] font-medium'
+                  : 'bg-white text-[var(--color-ink-2)] border-[var(--color-surface3)] hover:border-[var(--color-green)] hover:text-[var(--color-green)]',
+              ].join(' ')}
+            >
+              {SHORT[c.key]}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
-      {/* Country */}
+      {/* Country + City on same row (desktop), stacked (mobile) */}
       <div>
-        <label className={label}>Country</label>
+        <label className={lbl}>Country</label>
         <input
-          className={input}
+          className={inp}
           value={draft.country}
           onChange={(e) => updateDraft({ country: e.target.value })}
           placeholder="Sierra Leone"
         />
       </div>
 
-      {/* City / Region */}
       <div>
-        <label className={label}>City / Region</label>
+        <label className={lbl}>City / Region</label>
         <input
-          className={input}
+          className={inp}
           value={draft.city}
           onChange={(e) => updateDraft({ city: e.target.value })}
           placeholder="Freetown"
         />
       </div>
 
-      {/* Estimated time */}
+      {/* Time + Cost side by side always */}
       <div>
-        <label className={label}>Estimated Time</label>
+        <label className={lbl}>Estimated Time</label>
         <input
-          className={input}
+          className={inp}
           value={draft.estimated_time}
           onChange={(e) => updateDraft({ estimated_time: e.target.value })}
-          placeholder="2–3 business days"
+          placeholder="2–3 days"
         />
       </div>
 
-      {/* Estimated cost */}
       <div>
-        <label className={label}>Estimated Cost</label>
+        <label className={lbl}>Estimated Cost</label>
         <input
-          className={input}
+          className={inp}
           value={draft.estimated_cost}
           onChange={(e) => updateDraft({ estimated_cost: e.target.value })}
           placeholder="Le 150,000"
@@ -88,10 +103,10 @@ export function BasicsStep({ draft, updateDraft }: Props) {
       </div>
 
       {/* Description — full width */}
-      <div className="col-span-2">
-        <label className={label}>Short Description</label>
+      <div className="sm:col-span-2">
+        <label className={lbl}>Short Description</label>
         <textarea
-          className={`${input} resize-none`}
+          className={`${inp} resize-none`}
           rows={3}
           value={draft.description}
           onChange={(e) => updateDraft({ description: e.target.value })}
