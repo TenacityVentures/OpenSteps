@@ -33,7 +33,7 @@ export default function AppHeader(): JSX.Element {
             🔍
           </Link>
           <Link
-            href="#contribute"
+            href="/sl/contribute"
             className="text-sm font-medium px-3 py-1.5 rounded-lg bg-[var(--color-green)] text-white hover:bg-[var(--color-green-mid)] transition-colors"
           >
             Contribute
