@@ -11,12 +11,94 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ### Planned
 - Evidence upload flow (mobile + web)
-- Verification workbench for editors
 - SMS OTP authentication via Supabase × Twilio (Africell / Orange SL)
 - Krio language stub
 - ISR revalidation webhook
 - OpenGraph / WhatsApp share metadata on guide pages
-- 5 additional guides: Driver's Licence, Passport, NIN, NASSIT, TIN
+- Additional country activations (Nigeria, Ghana, South Africa)
+
+---
+
+## [0.3.0] — 2026-04-28
+
+### Added — Production auth, multi-country routing, verification & community features
+
+#### Authentication
+- **Sign-up page** (`/auth/signup`) — display name, email, password; DB trigger auto-creates `verifiers` row with `role = 'verifier'`
+- **Sign-in page** (`/auth/signin`) — email + password with `next` redirect param
+- **Auth callback** (`/auth/callback/route.ts`) — handles Supabase OAuth/magic-link code exchange
+- **`useUser` hook** — client-side session subscription via `onAuthStateChange`; used by `UserMenu` and auth-gated UI
+- **`UserMenu` component** — avatar + display name in `AppHeader`; dropdown with dashboard link, editor queue link (role-gated), sign-out
+- **Service role client** (`lib/supabase/admin.ts`) — bypasses RLS for editor write operations
+
+#### Multi-country routing
+- **`/[country]/` dynamic segment** replaces `/sl/` — all guide, contribute, verify, leaderboard, and category routes are now country-scoped
+- **`@opensteps/constants` — `countries.ts`** — `COUNTRIES`, `COUNTRY_MAP`, `ACTIVE_COUNTRY_CODES`, `CountryCode` type; Sierra Leone active, Nigeria/Ghana/South Africa stubbed
+- **Middleware** (`webapp/src/middleware.ts`) — refreshes Supabase session on every request; validates `[country]` against `ACTIVE_COUNTRY_CODES`; protects `/dashboard` and `/admin` routes
+- **`CountryProvider`** — React context propagating country metadata to child components; uses `createElement` to avoid React 18/19 dual-types issue
+- **Country layout** (`/[country]/layout.tsx`) — validates country against `COUNTRY_MAP`, calls `notFound()` for unknowns, wraps children in `CountryProvider`
+- **Root `page.tsx`** — redirects to first active country (`/sl`)
+- **Contribute wizard** — country field replaced with `<select>` of active countries; `submitGuide` action stores `country`
+- **`GuideCard`** — links updated to `/${guide.country}/guide/${guide.slug}`
+
+#### Verification system
+- **Community verify** — `communityVerify(guideId)` server action; inserts into `guide_verifications`; DB trigger auto-publishes guide at 5 verifications (`trust_score = 7.0`)
+- **Editor approve** — `editorApprove(guideId)` sets `published = true`, `trust_score = 8.0`, logs to `community_feed` using service role client
+- **Editor flag** — `editorFlag(guideId, reason)` with `community_feed` entry
+- **Inline editor edit** — `ReviewPanel` gains an "Edit" mode; title, category, description become inputs; `updateGuideContent` server action saves changes (editor only)
+- **`VerifyBanner`** component — shows verification progress bar + button on guide detail for pending guides; sign-in redirect for unauthenticated visitors
+- **Edit requests** — `requestEdit(guideId, reason)` server action; `approveEditRequest` unpublishes guide for re-edit; `rejectEditRequest` closes request
+- **`VerifyQueue`**, **`PendingList`**, **`SwipeStack`** — country-aware; links scoped to `/${country}/verify/…`
+
+#### Community tips
+- **`AddTipForm`** — auth-gated textarea; calls `addTip(guideId, text, stepId?)` server action; invokes `onAdded` callback on success
+- **`TipUpvoteButton`** — optimistic toggle; calls `upvoteTip` / `removeUpvote` server actions; reverts on error
+- **`CommunityTips` rewrite** — now a client component; Supabase Realtime subscription for new tips; fetches user's existing upvotes; renders `AddTipForm` + upvote buttons
+
+#### Admin & dashboard
+- **`/admin`** — editor panel with pending guide count, pending edit-request count, recent community feed; role-gated (editor only)
+- **`/admin/edit-requests`** — list of all edit requests with guide title, requester, reason, status badges; approve/reject buttons
+- **`/dashboard`** — profile header (avatar, display name, email, editor badge); stats (guides contributed, verifications, accuracy); "My guides" list via `community_feed`; edit request status history; quick action links
+
+#### New pages
+- **`/[country]/leaderboard`** — top 50 verifiers; desktop table + mobile cards; rank, avatar, verifications, accuracy, domains, streak weeks
+- **`/[country]/category/[key]`** — guides filtered by category + country; category heading, description, guide list
+
+#### Search
+- **`SearchInput`** client component — controlled input pre-populated from `useSearchParams()`; pushes updated query to `/search?q=…`; wrapped in `Suspense` on search page
+- **Search page** — search input at top; result count; country-aware "Browse all" fallback link
+
+#### Database additions (`migration_v2.sql`)
+- **`countries` table** — `code`, `name`, `currency`, `flag`, `active`; Sierra Leone seeded active
+- **`guides.country`** column — FK to `countries.code`; index on `(country, published)`
+- **`tip_upvotes` table** — composite PK `(tip_id, user_id)`; RLS; trigger to denormalise `tips.upvotes`
+- **`edit_requests` table** — `id`, `guide_id`, `requester_id`, `reason`, `status`, `reviewed_by`, `reviewed_at`; RLS
+- **`guide_verifications.note`** column
+- **`handle_new_user` trigger** — auto-creates `verifiers` row on `auth.users` INSERT
+- **`check_auto_publish` trigger** — fires on `guide_verifications` INSERT; publishes guide + writes `community_feed` at ≥ 5 verifications
+- **RLS write policies** — tips INSERT/DELETE, guide_verifications INSERT, verifiers UPDATE, edit_requests SELECT/INSERT
+
+#### Seed data (`seed_v2.sql`)
+- 7 additional Sierra Leone guides (6 published, all with steps, documents, budget lines, tips, feed events):
+  - Get a Driver's Licence (transport) — Le 185,000 · 6 steps
+  - Apply for a Passport (travel) — Le 450,000 · 5 steps
+  - Register for NIN (id) — free · 3 steps
+  - File Income Tax Return (tax) — Le 10,000 · 4 steps
+  - Register with NASSIT (health) — free · 3 steps
+  - Enrol at Fourah Bay College (education) — Le 75,000 · 5 steps
+  - Transfer Land Title (property) — Le 320,000 · 7 steps
+- Additional offices: DVLA, Immigration Department, NATCOM, FBC Admissions, OARG, SLRA
+
+### Changed
+- `AppHeader` — converted to client component; country-aware nav links; includes `UserMenu`
+- `RelatedGuides` — accepts optional `country` prop; links use `/${country}/guide/${slug}`
+- `GuideTrustPanel` — passes `country` through for related guide links
+- `BasicsStep` — free-text country input replaced with `<select>` of active countries
+- `ContributeWizard` — imports actions from `[country]/contribute/actions`; redirects to `/${draft.country}/contribute/submitted`
+- `public_read_guides` RLS policy — changed from `USING (published = true)` to `USING (true)`; code-layer filtering preserved in queries
+
+### Removed
+- `/sl/` static route segment — replaced by `/[country]/` dynamic routing
 
 ---
 
@@ -84,6 +166,7 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-[Unreleased]: https://github.com/opensteps-sl/opensteps/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/opensteps-sl/opensteps/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/opensteps-sl/opensteps/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/opensteps-sl/opensteps/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/opensteps-sl/opensteps/releases/tag/v0.1.0
