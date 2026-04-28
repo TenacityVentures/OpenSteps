@@ -308,7 +308,7 @@ INSERT INTO public.documents_needed (guide_id, step_id, label, required) VALUES
 INSERT INTO public.budget_lines (guide_id, step_id, label, amount, office, payment_type) VALUES
   ('10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000060', 'Eye / medical test fee', 25000, 'Clinic', 'cash'),
   ('10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000061', 'Learner motorcycle licence fee', 40000, 'Bank', 'bank'),
-  ('10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000064', 'Full motorcycle licence fee', 100000, 'Bank', 'bank'),
+  ('10000000-0000-0000-0000-000000000010', '20000000-0000-0000-0000-000000000063', 'Full motorcycle licence fee', 100000, 'Bank', 'bank'),
   ('10000000-0000-0000-0000-000000000010', null, 'Passport photos', 15000, 'Photo studio', 'cash');
 
 
