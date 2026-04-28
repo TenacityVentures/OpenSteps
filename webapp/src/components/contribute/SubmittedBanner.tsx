@@ -1,8 +1,10 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useState } from 'react';
 
-export function SubmittedBanner() {
+export function SubmittedBanner(): JSX.Element | null {
   const [visible, setVisible] = useState(true);
   if (!visible) return null;
 

@@ -14,13 +14,16 @@ function toSlug(title: string): string {
 function parseDuration(text: string): [number, number] | null {
   const nums = text.match(/\d+/g);
   if (!nums || nums.length === 0) return null;
-  const a = parseInt(nums[0]);
+  const a = parseInt(nums[0]!);
   const b = nums.length > 1 ? parseInt(nums[1] ?? '0') : a;
   return [Math.min(a, b), Math.max(a, b)];
 }
 
 export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> {
   const client = await createClient();
+
+  const { data: { user } } = await client.auth.getUser();
+  if (!user) throw new Error('You must be signed in to submit a guide.');
 
   const baseSlug = toSlug(draft.title.trim()) || 'guide';
   const slug = `${baseSlug}-${Date.now()}`;
@@ -30,13 +33,13 @@ export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> 
     0,
   );
 
-  // Insert guide (published: false — goes to editorial queue)
   const { data: guide, error: guideErr } = await client
     .from('guides')
     .insert({
       title: draft.title.trim(),
       slug,
       category: draft.category || 'business',
+      country: draft.country || 'sl',
       description: draft.description.trim() || null,
       steps_count: draft.steps.length,
       total_cost,
@@ -52,7 +55,6 @@ export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> 
   if (guideErr) throw new Error(guideErr.message);
   const guideId = guide.id as string;
 
-  // Insert steps
   if (draft.steps.length > 0) {
     const { error } = await client.from('steps').insert(
       draft.steps.map((s, i) => ({
@@ -69,7 +71,6 @@ export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> 
     if (error) throw new Error(error.message);
   }
 
-  // Insert required documents
   const validDocs = draft.documents.filter((d) => d.label.trim());
   if (validDocs.length > 0) {
     const { error } = await client.from('documents_needed').insert(
@@ -83,7 +84,6 @@ export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> 
     if (error) throw new Error(error.message);
   }
 
-  // Insert budget lines
   const validLines = draft.budget_lines.filter((l) => l.label.trim());
   if (validLines.length > 0) {
     const { error } = await client.from('budget_lines').insert(
@@ -98,6 +98,14 @@ export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> 
     );
     if (error) throw new Error(error.message);
   }
+
+  // Log to community feed
+  await client.from('community_feed').insert({
+    type: 'contribute',
+    guide_id: guideId,
+    actor_id: user.id,
+    description: `${user.user_metadata?.display_name ?? 'Someone'} submitted a new guide: ${draft.title.trim()}`,
+  });
 
   return { slug: guide.slug as string };
 }

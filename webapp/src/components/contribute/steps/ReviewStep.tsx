@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { CATEGORY_MAP } from '@opensteps/constants';
 import type { GuideDraft } from '../types';
 
@@ -20,7 +21,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-export function ReviewStep({ draft, onSubmit, submitting, error }: Props) {
+export function ReviewStep({ draft, onSubmit, submitting, error }: Props): JSX.Element {
   const categoryLabel =
     draft.category && CATEGORY_MAP[draft.category] ? CATEGORY_MAP[draft.category].label : draft.category || '—';
 

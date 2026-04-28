@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import type { PaymentType } from '@opensteps/types';
 import type { GuideDraft, BudgetLineDraft } from '../types';
 
@@ -22,7 +24,7 @@ function newLine(): BudgetLineDraft {
   return { id: crypto.randomUUID(), label: '', amount: '', office: '', payment_type: 'cash' };
 }
 
-export function FeesStep({ draft, updateDraft }: Props) {
+export function FeesStep({ draft, updateDraft }: Props): JSX.Element {
   const lines = draft.budget_lines;
 
   function add() {

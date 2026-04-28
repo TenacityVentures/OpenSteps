@@ -1,5 +1,6 @@
+import type { JSX } from 'react';
 import type { CategoryKey } from '@opensteps/types';
-import { CATEGORIES } from '@opensteps/constants';
+import { CATEGORIES, COUNTRIES } from '@opensteps/constants';
 import type { GuideDraft } from '../types';
 
 const lbl = 'block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)] mb-1.5';
@@ -23,7 +24,7 @@ interface Props {
   updateDraft: (updates: Partial<GuideDraft>) => void;
 }
 
-export function BasicsStep({ draft, updateDraft }: Props) {
+export function BasicsStep({ draft, updateDraft }: Props): JSX.Element {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
       {/* Title — full width */}
@@ -63,12 +64,17 @@ export function BasicsStep({ draft, updateDraft }: Props) {
       {/* Country + City on same row (desktop), stacked (mobile) */}
       <div>
         <label className={lbl}>Country</label>
-        <input
+        <select
           className={inp}
           value={draft.country}
-          onChange={(e) => updateDraft({ country: e.target.value })}
-          placeholder="Sierra Leone"
-        />
+          onChange={(e) => updateDraft({ country: e.target.value as import('@opensteps/types').CountryCode })}
+        >
+          {COUNTRIES.filter((c) => c.active).map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.flag} {c.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>

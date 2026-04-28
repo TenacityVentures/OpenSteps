@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { GuideDraft } from '../types';
 
 const label = 'block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)] mb-1.5';
@@ -9,7 +10,7 @@ interface Props {
   updateDraft: (updates: Partial<GuideDraft>) => void;
 }
 
-export function EvidenceStep({ draft, updateDraft }: Props) {
+export function EvidenceStep({ draft, updateDraft }: Props): JSX.Element {
   return (
     <div className="space-y-6">
       <p className="text-sm text-[var(--color-ink-3)]">

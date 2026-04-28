@@ -1,4 +1,4 @@
-import type { CategoryKey, PaymentType } from '@opensteps/types';
+import type { CategoryKey, CountryCode, PaymentType } from '@opensteps/types';
 
 export type StepDraft = {
   id: string;
@@ -33,7 +33,7 @@ export type OfficeDraft = {
 export type GuideDraft = {
   title: string;
   category: CategoryKey | '';
-  country: string;
+  country: CountryCode;
   city: string;
   estimated_time: string;
   estimated_cost: string;
@@ -48,7 +48,7 @@ export type GuideDraft = {
 export const EMPTY_DRAFT: GuideDraft = {
   title: '',
   category: '',
-  country: 'Sierra Leone',
+  country: 'sl',
   city: '',
   estimated_time: '',
   estimated_cost: '',

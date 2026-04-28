@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useState } from 'react';
 import type { GuideDraft, StepDraft } from '../types';
 
@@ -15,7 +17,7 @@ function newStep(): StepDraft {
   return { id: crypto.randomUUID(), title: '', description: '', cost: '', office: '', day: '' };
 }
 
-export function StepsBuilderStep({ draft, updateDraft }: Props) {
+export function StepsBuilderStep({ draft, updateDraft }: Props): JSX.Element {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const steps = draft.steps;

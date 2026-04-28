@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import type { GuideDraft } from './types';
@@ -11,7 +13,7 @@ import { FeesStep } from './steps/FeesStep';
 import { OfficesStep } from './steps/OfficesStep';
 import { EvidenceStep } from './steps/EvidenceStep';
 import { ReviewStep } from './steps/ReviewStep';
-import { submitGuide } from '@/app/sl/contribute/actions';
+import { submitGuide } from '@/app/[country]/contribute/actions';
 
 const DRAFT_KEY = 'opensteps_guide_draft';
 
@@ -40,7 +42,7 @@ function clearDraft() {
   try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
 }
 
-export function ContributeWizard() {
+export function ContributeWizard(): JSX.Element {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<GuideDraft>(EMPTY_DRAFT);
@@ -69,7 +71,7 @@ export function ContributeWizard() {
     try {
       await submitGuide(draft);
       clearDraft();
-      router.push('/sl/contribute/submitted');
+      router.push(`/${draft.country}/contribute/submitted`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
       setSubmitting(false);

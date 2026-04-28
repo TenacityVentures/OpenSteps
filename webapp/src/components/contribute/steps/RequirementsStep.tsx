@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useState } from 'react';
 import type { GuideDraft, DocumentDraft } from '../types';
 
@@ -16,7 +18,7 @@ function newDoc(): DocumentDraft {
   return { id: crypto.randomUUID(), label: '', required: true };
 }
 
-export function RequirementsStep({ draft, updateDraft }: Props) {
+export function RequirementsStep({ draft, updateDraft }: Props): JSX.Element {
   const [newLabel, setNewLabel] = useState('');
 
   const docs = draft.documents;

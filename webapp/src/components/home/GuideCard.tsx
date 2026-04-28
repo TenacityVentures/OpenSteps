@@ -1,12 +1,14 @@
+import type { JSX } from 'react';
 import Link from 'next/link';
 import type { Guide } from '@opensteps/types';
 import { formatLeone, formatDuration, formatDate } from '@/lib/format';
 import TrustBar from '@/components/ui/TrustBar';
 
-export default function GuideCard({ guide }: { guide: Guide }) {
+export default function GuideCard({ guide }: { guide: Guide }): JSX.Element {
+  const href = `/${guide.country}/guide/${guide.slug}`;
   return (
     <Link
-      href={`/sl/${guide.slug}`}
+      href={href}
       className="group flex items-center gap-4 p-4 rounded-xl bg-white border border-[var(--color-surface3)] hover:border-[var(--color-green)] hover:shadow-sm transition-all"
     >
       <div className="grow min-w-0">

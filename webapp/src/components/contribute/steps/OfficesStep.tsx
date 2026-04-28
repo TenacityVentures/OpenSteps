@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import type { GuideDraft, OfficeDraft } from '../types';
 
 const label = 'block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)] mb-1';
@@ -15,7 +17,7 @@ function newOffice(): OfficeDraft {
   return { id: crypto.randomUUID(), name: '', address: '', hours: '' };
 }
 
-export function OfficesStep({ draft, updateDraft }: Props) {
+export function OfficesStep({ draft, updateDraft }: Props): JSX.Element {
   const offices = draft.offices;
 
   function add() {
