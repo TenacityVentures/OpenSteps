@@ -1,10 +1,11 @@
+import type { JSX } from 'react';
 import type { Guide } from '@opensteps/types';
 import { formatLeone, formatDuration, formatDate, formatTrustScore } from '@/lib/format';
 import Badge from '@/components/ui/Badge';
 import TrustBar from '@/components/ui/TrustBar';
 import { CATEGORY_MAP } from '@opensteps/constants';
 
-export default function GuideHeader({ guide }: { guide: Guide }) {
+export default function GuideHeader({ guide }: { guide: Guide }): JSX.Element {
   const catMeta = CATEGORY_MAP[guide.category];
 
   return (

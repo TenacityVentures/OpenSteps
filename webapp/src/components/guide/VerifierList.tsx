@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
 import type { Verifier } from '@opensteps/types';
 
-export default function VerifierList({ verifiers }: { verifiers: Verifier[] }) {
+export default function VerifierList({ verifiers }: { verifiers: Verifier[] }): JSX.Element {
   return (
     <div className="space-y-2">
       <div className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-3)]">

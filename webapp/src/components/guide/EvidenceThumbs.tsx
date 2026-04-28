@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import Link from 'next/link';
 import type { Evidence } from '@opensteps/types';
 
@@ -13,7 +14,7 @@ export default function EvidenceThumbs({
 }: {
   evidence: Evidence[];
   guideSlug: string;
-}) {
+}): JSX.Element {
   const shown = evidence.slice(0, 6);
   const overflow = evidence.length - shown.length;
 

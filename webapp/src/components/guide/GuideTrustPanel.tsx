@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { Guide, Verifier, BudgetLine, DocumentNeeded } from '@opensteps/types';
 import { formatLeone, formatTrustScore, formatDate } from '@/lib/format';
 import TrustBar from '@/components/ui/TrustBar';
@@ -14,7 +15,7 @@ export default function GuideTrustPanel({
   verifiers: Verifier[];
   budget: BudgetLine[];
   documents: DocumentNeeded[];
-}) {
+}): JSX.Element {
   return (
     <div className="space-y-5">
       {/* Trust score */}

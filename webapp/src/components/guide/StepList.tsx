@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { Step, Evidence } from '@opensteps/types';
 import { formatLeone } from '@/lib/format';
 import Badge from '@/components/ui/Badge';
@@ -8,7 +9,7 @@ export default function StepList({
 }: {
   steps: Step[];
   evidence: Evidence[];
-}) {
+}): JSX.Element {
   return (
     <section>
       <h2 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-6">

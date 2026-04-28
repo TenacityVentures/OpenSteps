@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
 import type { DocumentNeeded } from '@opensteps/types';
 
-export default function WhatToBring({ documents }: { documents: DocumentNeeded[] }) {
+export default function WhatToBring({ documents }: { documents: DocumentNeeded[] }): JSX.Element {
   const required = documents.filter((d) => d.required);
   const optional = documents.filter((d) => !d.required);
 

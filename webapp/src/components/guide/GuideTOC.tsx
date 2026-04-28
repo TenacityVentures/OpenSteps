@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
 import type { Step } from '@opensteps/types';
 
-export default function GuideTOC({ steps }: { steps: Step[] }) {
+export default function GuideTOC({ steps }: { steps: Step[] }): JSX.Element {
   return (
     <nav aria-label="Steps">
       <div className="text-xs font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-3">

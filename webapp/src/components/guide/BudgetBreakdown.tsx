@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { BudgetLine } from '@opensteps/types';
 import { formatLeone } from '@/lib/format';
 
@@ -8,7 +9,7 @@ const PAYMENT_LABEL: Record<string, string> = {
   unofficial: 'Unofficial',
 };
 
-export default function BudgetBreakdown({ lines }: { lines: BudgetLine[] }) {
+export default function BudgetBreakdown({ lines }: { lines: BudgetLine[] }): JSX.Element {
   const total = lines.reduce((s, l) => s + l.amount, 0);
   const official = lines
     .filter((l) => l.payment_type !== 'unofficial')
