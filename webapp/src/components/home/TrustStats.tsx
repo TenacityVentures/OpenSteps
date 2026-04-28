@@ -1,6 +1,7 @@
+import type { JSX } from 'react';
 import type { Guide } from '@opensteps/types';
 
-export default function TrustStats({ guides }: { guides: Guide[] }) {
+export default function TrustStats({ guides }: { guides: Guide[] }): JSX.Element {
   const total = guides.length;
   const avgTrust =
     total > 0 ? (guides.reduce((s, g) => s + g.trust_score, 0) / total).toFixed(1) : '—';

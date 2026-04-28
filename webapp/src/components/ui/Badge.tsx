@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 type Variant = 'default' | 'ok' | 'warn' | 'err' | 'info';
 
 const STYLES: Record<Variant, string> = {
@@ -14,7 +15,7 @@ export default function Badge({
 }: {
   children: React.ReactNode;
   variant?: Variant;
-}) {
+}): JSX.Element {
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider border ${STYLES[variant]}`}

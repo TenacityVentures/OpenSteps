@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { redirect } from 'next/navigation';
 
 async function handleSearch(formData: FormData) {
@@ -6,7 +7,7 @@ async function handleSearch(formData: FormData) {
   if (q) redirect(`/search?q=${encodeURIComponent(q)}`);
 }
 
-export default function SearchHero() {
+export default function SearchHero(): JSX.Element {
   return (
     <div className="text-center py-8 space-y-6">
       <h1 className="font-serif text-4xl sm:text-5xl text-[var(--color-ink)] leading-tight max-w-2xl mx-auto">

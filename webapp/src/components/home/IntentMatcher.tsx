@@ -1,7 +1,8 @@
+import type { JSX } from 'react';
 import Link from 'next/link';
 import { INTENTS } from '@opensteps/constants';
 
-export default function IntentMatcher() {
+export default function IntentMatcher(): JSX.Element {
   return (
     <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       {INTENTS.map((intent) => (

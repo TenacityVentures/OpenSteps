@@ -1,5 +1,7 @@
 'use client';
 
+import type { JSX } from 'react';
+
 import { useEffect, useState } from 'react';
 import type { FeedItem } from '@opensteps/types';
 import { createClient } from '@/lib/supabase/client';
@@ -12,7 +14,7 @@ const TYPE_LABEL: Record<string, string> = {
   flag: '⚑ flagged',
 };
 
-export default function LiveFeedRail({ initialFeed }: { initialFeed: FeedItem[] }) {
+export default function LiveFeedRail({ initialFeed }: { initialFeed: FeedItem[] }): JSX.Element {
   const [feed, setFeed] = useState<FeedItem[]>(initialFeed);
 
   useEffect(() => {

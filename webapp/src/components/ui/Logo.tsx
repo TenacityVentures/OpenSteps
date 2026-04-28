@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 interface LogoProps {
   /**
    * icon     — full dashed circle + checkmark (app icon / avatar use)
@@ -62,7 +63,7 @@ function OpenMark({ size }: { size: number }) {
   );
 }
 
-export function Logo({ variant = 'wordmark', size = 32, className }: LogoProps) {
+export function Logo({ variant = 'wordmark', size = 32, className }: LogoProps): JSX.Element {
   if (variant === 'icon') {
     return (
       <span role="img" aria-label="OpenSteps" className={`text-[var(--color-green)] ${className ?? ''}`}>

@@ -1,7 +1,8 @@
+import type { JSX } from 'react';
 import type { Guide } from '@opensteps/types';
 import GuideCard from './GuideCard';
 
-export default function GuideList({ guides }: { guides: Guide[] }) {
+export default function GuideList({ guides }: { guides: Guide[] }): JSX.Element {
   if (guides.length === 0) {
     return (
       <p className="text-[var(--color-ink-3)] text-sm py-4">

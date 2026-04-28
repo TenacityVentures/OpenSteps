@@ -1,8 +1,9 @@
+import type { JSX } from 'react';
 import Link from 'next/link';
 import type { Category } from '@opensteps/types';
 import { CATEGORY_MAP } from '@opensteps/constants';
 
-export default function CategoryGrid({ categories }: { categories: Category[] }) {
+export default function CategoryGrid({ categories }: { categories: Category[] }): JSX.Element {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
       {categories.map((cat) => {

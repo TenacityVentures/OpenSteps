@@ -1,4 +1,5 @@
-export default function TrustBar({ score, max = 10 }: { score: number; max?: number }) {
+import type { JSX } from 'react';
+export default function TrustBar({ score, max = 10 }: { score: number; max?: number }): JSX.Element {
   const pct = Math.min(100, (score / max) * 100);
   return (
     <div className="flex items-center gap-2">
