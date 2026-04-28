@@ -6,6 +6,8 @@ export {
   searchGuides,
   getGuidesByCategory,
   getRelatedGuides,
+  getPendingGuides,
+  getPendingGuideBySlug,
 } from './queries/guides';
 
 export {
@@ -26,6 +28,9 @@ export {
   getTipsByGuide,
   getVerifiersByGuide,
   getTopVerifiers,
+  getUserTipUpvotes,
+  getVerificationCount,
+  hasUserVerified,
 } from './queries/community';
 
 export { getCategories } from './queries/categories';

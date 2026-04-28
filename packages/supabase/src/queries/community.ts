@@ -44,7 +44,55 @@ export async function getVerifiersByGuide(
     .limit(10);
 
   if (error) throw error;
-  return ((data ?? []) as { verifier: Verifier }[]).map((r) => r.verifier);
+  return ((data ?? []) as unknown as { verifier: Verifier }[]).map((r) => r.verifier);
+}
+
+/** IDs of tips the user has already upvoted for a guide */
+export async function getUserTipUpvotes(
+  client: SupabaseClient,
+  userId: string,
+  guideId: string,
+): Promise<string[]> {
+  const { data, error } = await client
+    .from('tip_upvotes')
+    .select('tip_id')
+    .eq('user_id', userId)
+    .in('tip_id', (
+      await client.from('tips').select('id').eq('guide_id', guideId)
+    ).data?.map((t: { id: string }) => t.id) ?? []);
+
+  if (error) return [];
+  return (data ?? []).map((r: { tip_id: string }) => r.tip_id);
+}
+
+/** Verification count for a guide */
+export async function getVerificationCount(
+  client: SupabaseClient,
+  guideId: string,
+): Promise<number> {
+  const { count, error } = await client
+    .from('guide_verifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('guide_id', guideId);
+
+  if (error) return 0;
+  return count ?? 0;
+}
+
+/** Check if the current user has already verified a guide */
+export async function hasUserVerified(
+  client: SupabaseClient,
+  guideId: string,
+  userId: string,
+): Promise<boolean> {
+  const { count, error } = await client
+    .from('guide_verifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('guide_id', guideId)
+    .eq('verifier_id', userId);
+
+  if (error) return false;
+  return (count ?? 0) > 0;
 }
 
 /** Top contributors / leaderboard */

@@ -1,7 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Guide, CategoryKey } from '@opensteps/types';
+import type { Guide, CategoryKey, CountryCode } from '@opensteps/types';
 
 export interface GetGuidesParams {
+  country?: CountryCode;
   category?: CategoryKey;
   limit?: number;
   orderBy?: 'follower_count' | 'trust_score' | 'last_verified_at';
@@ -10,7 +11,7 @@ export interface GetGuidesParams {
 /** Fetch published guides for listing (home, category browse) */
 export async function getGuides(
   client: SupabaseClient,
-  { category, limit = 20, orderBy = 'follower_count' }: GetGuidesParams = {},
+  { country, category, limit = 20, orderBy = 'follower_count' }: GetGuidesParams = {},
 ): Promise<Guide[]> {
   let query = client
     .from('guides')
@@ -19,9 +20,8 @@ export async function getGuides(
     .order(orderBy, { ascending: false })
     .limit(limit);
 
-  if (category) {
-    query = query.eq('category', category);
-  }
+  if (country) query = query.eq('country', country);
+  if (category) query = query.eq('category', category);
 
   const { data, error } = await query;
   if (error) throw error;
@@ -68,9 +68,40 @@ export async function searchGuides(
 export async function getGuidesByCategory(
   client: SupabaseClient,
   category: CategoryKey,
+  country?: CountryCode,
   limit = 40,
 ): Promise<Guide[]> {
-  return getGuides(client, { category, limit, orderBy: 'trust_score' });
+  return getGuides(client, { ...(country ? { country } : {}), category, limit, orderBy: 'trust_score' });
+}
+
+/** Unpublished guides waiting for editorial review */
+export async function getPendingGuides(
+  client: SupabaseClient,
+  limit = 20,
+): Promise<Pick<Guide, 'id' | 'slug' | 'title' | 'category' | 'description' | 'steps_count' | 'total_cost' | 'duration_days' | 'created_at'>[]> {
+  const { data, error } = await client
+    .from('guides')
+    .select('id, slug, title, category, description, steps_count, total_cost, duration_days, created_at')
+    .eq('published', false)
+    .order('created_at', { ascending: true })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as Pick<Guide, 'id' | 'slug' | 'title' | 'category' | 'description' | 'steps_count' | 'total_cost' | 'duration_days' | 'created_at'>[];
+}
+
+/** Single unpublished guide by slug (for the review detail page) */
+export async function getPendingGuideBySlug(
+  client: SupabaseClient,
+  slug: string,
+): Promise<Guide | null> {
+  const { data, error } = await client
+    .from('guides')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', false)
+    .single();
+  if (error) return null;
+  return data as Guide;
 }
 
 /** IDs + titles of related guides (for the sidebar) */
@@ -85,7 +116,7 @@ export async function getRelatedGuides(
     .limit(6);
 
   if (error) throw error;
-  return ((data ?? []) as { related_guide: Pick<Guide, 'id' | 'title' | 'slug' | 'category' | 'trust_score'> }[]).map(
+  return ((data ?? []) as unknown as { related_guide: Pick<Guide, 'id' | 'title' | 'slug' | 'category' | 'trust_score'> }[]).map(
     (r) => r.related_guide,
   );
 }
