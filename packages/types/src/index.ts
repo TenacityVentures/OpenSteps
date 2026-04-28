@@ -2,6 +2,8 @@
 // Single source of truth shared between webapp/ and mobile/.
 // All monetary values are integers in Sierra Leone Leone (SLL/NLe).
 
+export type CountryCode = 'sl' | 'ng' | 'za' | 'gh';
+
 export type CategoryKey =
   | 'business'
   | 'id'
@@ -39,12 +41,41 @@ export interface Office {
   lng: number | null;
 }
 
+// ── Country ───────────────────────────────────────────────────────────────
+export interface Country {
+  code: CountryCode;
+  name: string;
+  currency: string;
+  flag: string;
+  active: boolean;
+}
+
+// ── TipUpvote ─────────────────────────────────────────────────────────────
+export interface TipUpvote {
+  tip_id: string;
+  user_id: string;
+  created_at: string;
+}
+
+// ── EditRequest ───────────────────────────────────────────────────────────
+export interface EditRequest {
+  id: string;
+  guide_id: string;
+  requester_id: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+}
+
 // ── Guide ─────────────────────────────────────────────────────────────────
 export interface Guide {
   id: string;
   title: string;
   slug: string;
   category: CategoryKey;
+  country: CountryCode;
   description: string | null;
   /** Denormalized step count from steps table */
   steps_count: number;
