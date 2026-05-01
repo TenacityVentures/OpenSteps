@@ -8,7 +8,7 @@ import { formatLeone, formatDuration } from '@opensteps/types';
 import StepList from '@/components/guide/StepList';
 import WhatToBring from '@/components/guide/WhatToBring';
 import BudgetBreakdown from '@/components/guide/BudgetBreakdown';
-import { editorApprove, editorFlag, updateGuideContent } from '@/app/[country]/verify/actions';
+import { editorApprove, editorFlag, updateGuideContent, updateStep, updateDocument } from '@/app/[country]/verify/actions';
 
 const CATEGORY_LABEL: Record<string, string> = {
   business: 'Business',
@@ -40,6 +40,8 @@ export function ReviewPanel({ guide, steps, documents, budgetLines, country }: P
   const [editTitle, setEditTitle] = useState(guide.title);
   const [editDesc, setEditDesc] = useState(guide.description ?? '');
   const [editCategory, setEditCategory] = useState<CategoryKey>(guide.category);
+  const [editSteps, setEditSteps] = useState<Record<string, { title: string; description: string }>>({});
+  const [editDocs, setEditDocs] = useState<Record<string, { label: string; required: boolean }>>({});
 
   function handleApprove() {
     setError(null);
@@ -76,7 +78,24 @@ export function ReviewPanel({ guide, steps, documents, budgetLines, country }: P
           ...(editDesc.trim() ? { description: editDesc.trim() } : {}),
           ...(editCategory ? { category: editCategory } : {}),
         });
+
+        await Promise.all([
+          ...Object.entries(editSteps).map(([id, s]) => {
+            const changes: { title?: string; description?: string } = {};
+            if (s.title.trim()) changes.title = s.title.trim();
+            if (s.description.trim()) changes.description = s.description.trim();
+            return updateStep(id, changes);
+          }),
+          ...Object.entries(editDocs).map(([id, d]) => {
+            const changes: { label?: string; required?: boolean } = { required: d.required };
+            if (d.label.trim()) changes.label = d.label.trim();
+            return updateDocument(id, changes);
+          }),
+        ]);
+
         setEditMode(false);
+        setEditSteps({});
+        setEditDocs({});
         router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to save edits.');
@@ -114,7 +133,7 @@ export function ReviewPanel({ guide, steps, documents, budgetLines, country }: P
             <>
               <button
                 type="button"
-                onClick={() => { setEditMode(false); setEditTitle(guide.title); setEditDesc(guide.description ?? ''); setEditCategory(guide.category); }}
+                onClick={() => { setEditMode(false); setEditTitle(guide.title); setEditDesc(guide.description ?? ''); setEditCategory(guide.category); setEditSteps({}); setEditDocs({}); }}
                 className="px-3 py-2 text-sm text-[var(--color-ink-3)] hover:text-[var(--color-ink)] transition-colors"
               >
                 Cancel
@@ -227,22 +246,58 @@ export function ReviewPanel({ guide, steps, documents, budgetLines, country }: P
             {steps.length > 0 && (
               <div className="space-y-2 pt-2 border-t border-[var(--color-surface3)]">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)]">
-                  Step titles
+                  Steps
                 </span>
-                <ol className="space-y-1">
-                  {steps.map((s) => (
-                    <li key={s.id} className="flex items-start gap-2 text-sm text-[var(--color-ink-2)]">
-                      <span className="shrink-0 w-5 h-5 rounded-full bg-[var(--color-green)] text-white text-xs font-mono flex items-center justify-center leading-none mt-0.5">
-                        {s.n}
-                      </span>
-                      {s.title}
-                      {s.cost > 0 && (
-                        <span className="ml-auto shrink-0 text-xs font-mono text-[var(--color-ink-3)]">
-                          {formatLeone(s.cost)}
+                <ol className="space-y-3">
+                  {steps.map((s) => {
+                    const draft = editSteps[s.id];
+                    const title = draft?.title ?? s.title;
+                    const desc = draft?.description ?? (s.description ?? '');
+                    return (
+                      <li key={s.id} className="flex items-start gap-2">
+                        <span className="shrink-0 w-5 h-5 rounded-full bg-[var(--color-green)] text-white text-xs font-mono flex items-center justify-center leading-none mt-1">
+                          {s.n}
                         </span>
-                      )}
-                    </li>
-                  ))}
+                        {editMode ? (
+                          <div className="flex-1 space-y-1.5">
+                            <input
+                              className={inp}
+                              value={title}
+                              onChange={(e) =>
+                                setEditSteps((prev) => ({
+                                  ...prev,
+                                  [s.id]: { title: e.target.value, description: prev[s.id]?.description ?? desc },
+                                }))
+                              }
+                              placeholder="Step title"
+                            />
+                            <textarea
+                              className={`${inp} resize-none text-xs`}
+                              rows={2}
+                              value={desc}
+                              onChange={(e) =>
+                                setEditSteps((prev) => ({
+                                  ...prev,
+                                  [s.id]: { title: prev[s.id]?.title ?? title, description: e.target.value },
+                                }))
+                              }
+                              placeholder="Step description (optional)"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex-1 text-sm text-[var(--color-ink-2)]">
+                            <p>{s.title}</p>
+                            {s.description && <p className="text-xs text-[var(--color-ink-3)] mt-0.5">{s.description}</p>}
+                          </div>
+                        )}
+                        {s.cost > 0 && (
+                          <span className="ml-auto shrink-0 text-xs font-mono text-[var(--color-ink-3)] mt-1">
+                            {formatLeone(s.cost)}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ol>
               </div>
             )}
@@ -252,15 +307,50 @@ export function ReviewPanel({ guide, steps, documents, budgetLines, country }: P
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)]">
                   Documents required
                 </span>
-                <ul className="space-y-1">
-                  {documents.map((d) => (
-                    <li key={d.id} className="flex items-center gap-2 text-sm text-[var(--color-ink-2)]">
-                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${d.required ? 'bg-[var(--color-green)] text-white' : 'bg-[var(--color-surface2)] text-[var(--color-ink-3)]'}`}>
-                        {d.required ? 'Req' : 'Opt'}
-                      </span>
-                      {d.label}
-                    </li>
-                  ))}
+                <ul className="space-y-2">
+                  {documents.map((d) => {
+                    const draft = editDocs[d.id];
+                    const label = draft?.label ?? d.label;
+                    const required = draft?.required ?? d.required;
+                    return (
+                      <li key={d.id} className="flex items-center gap-2 text-sm text-[var(--color-ink-2)]">
+                        {editMode ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setEditDocs((prev) => ({
+                                  ...prev,
+                                  [d.id]: { label: prev[d.id]?.label ?? label, required: !required },
+                                }))
+                              }
+                              className={`shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded transition-colors ${required ? 'bg-[var(--color-green)] text-white' : 'bg-[var(--color-surface2)] text-[var(--color-ink-3)]'}`}
+                              title="Toggle required / optional"
+                            >
+                              {required ? 'Req' : 'Opt'}
+                            </button>
+                            <input
+                              className={`${inp} text-xs py-1`}
+                              value={label}
+                              onChange={(e) =>
+                                setEditDocs((prev) => ({
+                                  ...prev,
+                                  [d.id]: { label: e.target.value, required: prev[d.id]?.required ?? required },
+                                }))
+                              }
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <span className={`shrink-0 text-[10px] font-mono px-1.5 py-0.5 rounded ${d.required ? 'bg-[var(--color-green)] text-white' : 'bg-[var(--color-surface2)] text-[var(--color-ink-3)]'}`}>
+                              {d.required ? 'Req' : 'Opt'}
+                            </span>
+                            {d.label}
+                          </>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}

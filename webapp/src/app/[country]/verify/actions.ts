@@ -98,6 +98,38 @@ export async function updateGuideContent(
   if (error) throw new Error(error.message);
 }
 
+/** Editor: update a single step's content */
+export async function updateStep(
+  stepId: string,
+  changes: { title?: string; description?: string; cost?: number },
+): Promise<void> {
+  await requireEditor();
+  const admin = createAdminClient();
+
+  const { error } = await admin
+    .from('steps')
+    .update(changes)
+    .eq('id', stepId);
+
+  if (error) throw new Error(error.message);
+}
+
+/** Editor: update a document requirement's label or required flag */
+export async function updateDocument(
+  docId: string,
+  changes: { label?: string; required?: boolean },
+): Promise<void> {
+  await requireEditor();
+  const admin = createAdminClient();
+
+  const { error } = await admin
+    .from('documents_needed')
+    .update(changes)
+    .eq('id', docId);
+
+  if (error) throw new Error(error.message);
+}
+
 /** Request edit access for a published guide */
 export async function requestEdit(guideId: string, reason: string): Promise<void> {
   const { supabase, user } = await requireAuth();
