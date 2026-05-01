@@ -23,7 +23,8 @@ export function VerifyQueue({ guides, country }: Props): JSX.Element {
         <SwipeStack
           guides={guides}
           cardIndex={cardIndex}
-          onAdvance={() => setCardIndex((i) => i + 1)}
+          onAdvance={() => setCardIndex((i) => Math.min(i + 1, guides.length))}
+          onRetreat={() => setCardIndex((i) => Math.max(i - 1, 0))}
           country={country}
         />
       </section>
