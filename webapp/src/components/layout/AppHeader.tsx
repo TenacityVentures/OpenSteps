@@ -6,10 +6,12 @@ import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/ui/Logo';
 import { UserMenu } from '@/components/layout/UserMenu';
 import { CountrySwitcher } from '@/components/layout/CountrySwitcher';
+import { ACTIVE_COUNTRY_CODES } from '@opensteps/constants';
 
 function extractCountry(pathname: string): string {
   const match = pathname.match(/^\/([a-z]{2})(\/|$)/);
-  return match?.[1] ?? 'sl';
+  const code = match?.[1];
+  return code && (ACTIVE_COUNTRY_CODES as string[]).includes(code) ? code : 'sl';
 }
 
 export default function AppHeader(): JSX.Element {
@@ -30,7 +32,7 @@ export default function AppHeader(): JSX.Element {
           <Link href={`/${country}`} className="hover:text-[var(--color-green)] transition-colors">Browse</Link>
           <Link href={`/${country}/verify`} className="hover:text-[var(--color-green)] transition-colors">Verify</Link>
           <Link href={`/${country}/leaderboard`} className="hover:text-[var(--color-green)] transition-colors">Leaderboard</Link>
-          <Link href="/search" className="hover:text-[var(--color-green)] transition-colors">Search</Link>
+          {/* <Link href="/search" className="hover:text-[var(--color-green)] transition-colors">Search</Link> */}
         </nav>
 
         <div className="flex-1" />
@@ -39,9 +41,13 @@ export default function AppHeader(): JSX.Element {
         <div className="flex items-center gap-2">
           <Link
             href="/search"
-            className="text-sm text-[var(--color-ink-2)] hover:text-[var(--color-green)] px-2.5 py-1.5 rounded-lg hover:bg-[var(--color-surface2)] transition-colors"
+            aria-label="Search"
+            className="hidden md:flex items-center justify-center w-8 h-8 text-[var(--color-ink-2)] hover:text-[var(--color-green)] rounded-lg hover:bg-[var(--color-surface2)] transition-colors"
           >
-            🔍
+            <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <circle cx="8.5" cy="8.5" r="5.5" />
+              <line x1="12.5" y1="12.5" x2="17" y2="17" />
+            </svg>
           </Link>
           <Link
             href={`/${country}/contribute`}
