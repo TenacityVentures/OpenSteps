@@ -32,19 +32,32 @@ interface Props {
   params: Promise<{ country: string; slug: string }>;
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://opensteps.org';
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { country, slug } = await params;
   const client = await createClient();
   const guide = await getGuideBySlug(client, slug);
   if (!guide) return {};
+  const desc =
+    guide.description ??
+    `${guide.steps_count} steps · ${formatLeone(guide.total_cost)} · ${formatDuration(guide.duration_days)}`;
+  const url = `${BASE_URL}/${country}/guide/${slug}`;
   return {
     title: guide.title,
-    description: guide.description ?? undefined,
+    description: desc,
+    alternates: { canonical: url },
     openGraph: {
       title: `${guide.title} — OpenSteps`,
-      description:
-        guide.description ??
-        `${guide.steps_count} steps · ${formatLeone(guide.total_cost)} · ${formatDuration(guide.duration_days)}`,
+      description: desc,
+      url,
+      type: 'article',
+      images: [{ url: '/logo.svg', width: 512, height: 512, alt: 'OpenSteps' }],
+    },
+    twitter: {
+      card: 'summary',
+      title: guide.title,
+      description: desc,
     },
   };
 }
@@ -68,7 +81,37 @@ function GuidePage({
   guide, isPending, country, slug,
   steps, documents, budget, evidence, tips, verifiers, related, verificationCount,
 }: PageData): JSX.Element {
+  // HowTo structured data — helps search engines surface the guide as a rich result
+  const howTo = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: guide.title,
+    ...(guide.description ? { description: guide.description } : {}),
+    ...(guide.duration_days ? { totalTime: `P${guide.duration_days}D` } : {}),
+    ...(guide.total_cost > 0 ? {
+      estimatedCost: { '@type': 'MonetaryAmount', currency: 'SLL', value: String(guide.total_cost) },
+    } : {}),
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.title,
+      text: s.description ?? s.title,
+    })),
+  };
+
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${BASE_URL}/${country}` },
+      { '@type': 'ListItem', position: 2, name: guide.title },
+    ],
+  };
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
     <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {isPending && (
         <div className="mb-6">
@@ -114,6 +157,7 @@ function GuidePage({
         </aside>
       </div>
     </div>
+    </>
   );
 }
 

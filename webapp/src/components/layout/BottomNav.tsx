@@ -101,7 +101,10 @@ export function BottomNav(): JSX.Element {
   if (pathname.startsWith('/auth') || pathname.startsWith('/admin')) return <></>;
 
   return (
-    <nav className="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-[var(--color-surface3)] safe-area-pb">
+    <nav
+      aria-label="Mobile navigation"
+      className="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-[var(--color-surface3)] safe-area-pb"
+    >
       <div className="flex items-stretch h-16">
         {NAV_ITEMS.map((item) => {
           const active = item.match(pathname, country);
@@ -112,6 +115,8 @@ export function BottomNav(): JSX.Element {
               <Link
                 key={item.key}
                 href={href}
+                aria-label={item.label}
+                aria-current={active ? 'page' : undefined}
                 className="flex-1 flex flex-col items-center justify-center gap-0.5 group"
               >
                 <div className={[
@@ -135,6 +140,8 @@ export function BottomNav(): JSX.Element {
               <Link
                 key={item.key}
                 href={href}
+                aria-label={item.label}
+                aria-current={active ? 'page' : undefined}
                 className="flex-1 flex flex-col items-center justify-center gap-1 group"
               >
                 <div className={[
@@ -142,13 +149,13 @@ export function BottomNav(): JSX.Element {
                   active
                     ? 'bg-[var(--color-green)] text-white ring-2 ring-[var(--color-green)] ring-offset-1'
                     : 'bg-[var(--color-green)] text-white opacity-60 group-active:opacity-100',
-                ].join(' ')}>
+                ].join(' ')} aria-hidden="true">
                   {initial}
                 </div>
                 <span className={[
                   'text-[9px] font-mono tracking-wide transition-colors',
                   active ? 'text-[var(--color-green)]' : 'text-[var(--color-ink-4)]',
-                ].join(' ')}>
+                ].join(' ')} aria-hidden="true">
                   {item.label}
                 </span>
               </Link>
@@ -159,18 +166,20 @@ export function BottomNav(): JSX.Element {
             <Link
               key={item.key}
               href={href}
+              aria-label={item.label}
+              aria-current={active ? 'page' : undefined}
               className="flex-1 flex flex-col items-center justify-center gap-1 group"
             >
               <span className={[
                 'transition-all duration-150 group-active:scale-90',
                 active ? 'text-[var(--color-green)]' : 'text-[var(--color-ink-4)] group-hover:text-[var(--color-ink-3)]',
-              ].join(' ')}>
+              ].join(' ')} aria-hidden="true">
                 {item.icon}
               </span>
               <span className={[
                 'text-[9px] font-mono tracking-wide transition-colors',
                 active ? 'text-[var(--color-green)]' : 'text-[var(--color-ink-4)]',
-              ].join(' ')}>
+              ].join(' ')} aria-hidden="true">
                 {item.label}
               </span>
             </Link>

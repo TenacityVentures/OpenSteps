@@ -194,7 +194,14 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" role="region" aria-label="Guide verification queue">
+      {/* Screen-reader live region — announces current guide position on card change */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {guide
+          ? `Guide ${cardIndex + 1} of ${guides.length}: ${guide.title}`
+          : 'All guides reviewed'}
+      </div>
+
       {/* ── Card stack ───────────────────────────────────────────────── */}
       <div className="relative overflow-visible pb-2">
         {/* Behind card — full GuideCard, slightly shrunk and shifted */}
@@ -204,13 +211,15 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
           </div>
         )}
 
-        {/* Front card — interactive */}
+        {/* Front card — interactive, swipeable */}
         <div
           style={frontStyle}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
+          aria-label={`${guide.title} — guide ${cardIndex + 1} of ${guides.length}. Swipe or use arrow keys to navigate.`}
+          tabIndex={0}
         >
           <GuideCard guide={guide} index={cardIndex} total={guides.length} />
         </div>
@@ -226,13 +235,16 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
       {/* ── Flag reason input ────────────────────────────────────────── */}
       {flagMode && (
         <div className="flex gap-2">
+          <label htmlFor="flag-reason" className="sr-only">Flag reason</label>
           <input
+            id="flag-reason"
             className="flex-1 px-3 py-2 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-red)] focus:border-[var(--color-red)] transition-colors"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Reason (e.g. Missing steps, inaccurate cost)"
             onKeyDown={(e) => e.key === 'Enter' && handleFlag()}
             autoFocus
+            aria-describedby="flag-reason-hint"
           />
           <button
             type="button"
@@ -244,7 +256,12 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
         </div>
       )}
 
-      {actionError && <p className="text-xs text-[var(--color-red)]">{actionError}</p>}
+      <p id="flag-reason-hint" className="sr-only">Describe why this guide needs revision, then press Enter or click Confirm flag.</p>
+      {actionError && (
+        <p className="text-xs text-[var(--color-red)]" role="alert" aria-live="assertive">
+          {actionError}
+        </p>
+      )}
 
       {/* ── Action buttons ───────────────────────────────────────────── */}
       <div className="flex items-center gap-3">

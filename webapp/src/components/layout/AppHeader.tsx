@@ -18,21 +18,37 @@ export default function AppHeader(): JSX.Element {
   const pathname = usePathname();
   const country = extractCountry(pathname);
 
+  const navLinks = [
+    { label: 'Browse',      href: `/${country}`,             active: pathname === `/${country}` || pathname === `/${country}/` },
+    { label: 'Verify',      href: `/${country}/verify`,      active: pathname.startsWith(`/${country}/verify`) },
+    { label: 'Leaderboard', href: `/${country}/leaderboard`, active: pathname.startsWith(`/${country}/leaderboard`) },
+    // { label: 'Search', href: '/search', active: pathname.startsWith('/search') },
+  ];
+
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-[var(--color-surface3)]">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center gap-6">
         {/* Brand */}
-        <Link href={`/${country}`} className="flex items-center gap-2 shrink-0">
+        <Link href={`/${country}`} aria-label="OpenSteps home" className="flex items-center gap-2 shrink-0">
           <Logo variant="wordmark" size={28} />
         </Link>
         <CountrySwitcher current={country} />
 
         {/* Nav */}
-        <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--color-ink-2)]">
-          <Link href={`/${country}`} className="hover:text-[var(--color-green)] transition-colors">Browse</Link>
-          <Link href={`/${country}/verify`} className="hover:text-[var(--color-green)] transition-colors">Verify</Link>
-          <Link href={`/${country}/leaderboard`} className="hover:text-[var(--color-green)] transition-colors">Leaderboard</Link>
-          {/* <Link href="/search" className="hover:text-[var(--color-green)] transition-colors">Search</Link> */}
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-6 text-sm text-[var(--color-ink-2)]">
+          {navLinks.map(({ label, href, active }) => (
+            <Link
+              key={label}
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              className={[
+                'hover:text-[var(--color-green)] transition-colors',
+                active ? 'text-[var(--color-green)] font-medium' : '',
+              ].join(' ')}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
 
         <div className="flex-1" />
