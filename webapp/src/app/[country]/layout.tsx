@@ -8,6 +8,8 @@ import { CountryProvider } from '@/components/CountryProvider';
 import { COUNTRY_MAP, ACTIVE_COUNTRY_CODES } from '@opensteps/constants';
 import type { CountryCode } from '@opensteps/types';
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://opensteps.org';
+
 interface Props {
   children: React.ReactNode;
   params: Promise<{ country: string }>;
@@ -20,6 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: { template: `%s — OpenSteps ${meta.flag}`, default: `OpenSteps ${meta.flag} ${meta.name}` },
     description: `Community-verified step-by-step guides for government processes in ${meta.name}.`,
+    alternates: {
+      types: { 'application/rss+xml': `${BASE_URL}/${country}/feed` },
+    },
   };
 }
 
@@ -33,7 +38,7 @@ export default async function CountryLayout({ children, params }: Props): Promis
   return (
     <CountryProvider country={meta}>
       <AppHeader />
-      <main className="pb-16 sm:pb-0">{children}</main>
+      <main id="main-content" className="pb-16 sm:pb-0">{children}</main>
       <AppFooter country={meta} />
       <BottomNav />
     </CountryProvider>
