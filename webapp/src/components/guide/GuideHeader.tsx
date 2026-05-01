@@ -12,9 +12,11 @@ export default function GuideHeader({ guide }: { guide: Guide }): JSX.Element {
     <div className="space-y-4">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs font-mono text-[var(--color-ink-3)]">
-        <a href="/sl" className="hover:text-[var(--color-green)]">Sierra Leone</a>
+        <a href={`/${guide.country}`} className="hover:text-[var(--color-green)]">
+          {guide.country.toUpperCase()}
+        </a>
         <span>/</span>
-        <a href={`/sl/${guide.category}`} className="hover:text-[var(--color-green)]">
+        <a href={`/${guide.country}/category/${guide.category}`} className="hover:text-[var(--color-green)]">
           {catMeta?.label ?? guide.category}
         </a>
       </div>

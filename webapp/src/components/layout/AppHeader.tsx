@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/ui/Logo';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { CountrySwitcher } from '@/components/layout/CountrySwitcher';
 
 function extractCountry(pathname: string): string {
   const match = pathname.match(/^\/([a-z]{2})(\/|$)/);
@@ -21,10 +22,8 @@ export default function AppHeader(): JSX.Element {
         {/* Brand */}
         <Link href={`/${country}`} className="flex items-center gap-2 shrink-0">
           <Logo variant="wordmark" size={28} />
-          <span className="hidden sm:inline text-xs font-mono text-[var(--color-ink-3)] bg-[var(--color-surface2)] px-2 py-0.5 rounded-full">
-            🇸🇱 Sierra Leone
-          </span>
         </Link>
+        <CountrySwitcher current={country} />
 
         {/* Nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--color-ink-2)]">

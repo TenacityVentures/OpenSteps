@@ -24,7 +24,7 @@ export function UserMenu(): JSX.Element {
   async function signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/sl');
+    router.push('/');
     router.refresh();
   }
 

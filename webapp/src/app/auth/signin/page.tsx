@@ -11,7 +11,7 @@ const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] r
 export default function SignInPage(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') ?? '/sl';
+  const next = searchParams.get('next') ?? '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -86,7 +86,7 @@ export default function SignInPage(): JSX.Element {
 
       <p className="text-sm text-center text-[var(--color-ink-3)]">
         No account?{' '}
-        <Link href={`/auth/signup${next !== '/sl' ? `?next=${next}` : ''}`} className="text-[var(--color-green)] hover:underline font-medium">
+        <Link href={`/auth/signup${next !== '/' ? `?next=${next}` : ''}`} className="text-[var(--color-green)] hover:underline font-medium">
           Create one
         </Link>
       </p>

@@ -1,8 +1,10 @@
 import type { JSX } from 'react';
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { ACTIVE_COUNTRY_CODES } from '@opensteps/constants';
 
 export const metadata: Metadata = { title: 'My Dashboard — OpenSteps' };
 
@@ -10,6 +12,12 @@ export default async function DashboardPage(): Promise<JSX.Element> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/signin?next=/dashboard');
+
+  const cookieStore = await cookies();
+  const preferred = cookieStore.get('preferred_country')?.value;
+  const country = preferred && (ACTIVE_COUNTRY_CODES as string[]).includes(preferred)
+    ? preferred
+    : (ACTIVE_COUNTRY_CODES[0] ?? 'sl');
 
   const displayName: string = (user.user_metadata?.['display_name'] as string | undefined)
     ?? user.email?.split('@')[0]
@@ -71,7 +79,7 @@ export default async function DashboardPage(): Promise<JSX.Element> {
         {contributions.length === 0 ? (
           <div className="text-center py-10 border border-dashed border-[var(--color-surface3)] rounded-xl">
             <p className="text-sm text-[var(--color-ink-4)]">You haven&apos;t contributed a guide yet.</p>
-            <Link href="/sl/contribute" className="mt-2 inline-block text-sm text-[var(--color-green)] hover:underline">
+            <Link href={`/${country}/contribute`} className="mt-2 inline-block text-sm text-[var(--color-green)] hover:underline">
               Contribute your first guide →
             </Link>
           </div>
@@ -137,13 +145,13 @@ export default async function DashboardPage(): Promise<JSX.Element> {
       {/* Quick actions */}
       <section className="flex flex-wrap gap-3">
         <Link
-          href="/sl/contribute"
+          href={`/${country}/contribute`}
           className="px-4 py-2 rounded-lg bg-[var(--color-green)] text-white text-sm font-medium hover:bg-[var(--color-green-mid)] transition-colors"
         >
           Contribute a guide
         </Link>
         <Link
-          href="/sl/verify"
+          href={`/${country}/verify`}
           className="px-4 py-2 rounded-lg border border-[var(--color-surface3)] text-sm text-[var(--color-ink-2)] hover:bg-[var(--color-surface2)] transition-colors"
         >
           Verify guides

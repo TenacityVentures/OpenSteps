@@ -5,17 +5,21 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { COUNTRIES } from '@opensteps/constants';
+import type { CountryCode } from '@opensteps/types';
 
 const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
 export default function SignUpPage(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') ?? '/sl';
+  const next = searchParams.get('next') ?? null;
+  const activeCountries = COUNTRIES.filter((c) => c.active);
 
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [country, setCountry] = useState(activeCountries[0]?.code ?? 'sl');
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -28,13 +32,14 @@ export default function SignUpPage(): JSX.Element {
         email,
         password,
         options: {
-          data: { display_name: displayName.trim() },
+          data: { display_name: displayName.trim(), preferred_country: country },
         },
       });
       if (error) {
         setError(error.message);
       } else {
-        router.push(next);
+        document.cookie = `preferred_country=${country};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
+        router.push(next ?? `/${country}`);
         router.refresh();
       }
     });
@@ -62,6 +67,25 @@ export default function SignUpPage(): JSX.Element {
             placeholder="How you'll appear to others"
           />
         </div>
+
+        {activeCountries.length > 1 && (
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)]">
+              Country
+            </label>
+            <select
+              className={inp}
+              value={country}
+              onChange={(e) => setCountry(e.target.value as CountryCode)}
+            >
+              {activeCountries.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.flag} {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <label className="block text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-3)]">
@@ -109,7 +133,7 @@ export default function SignUpPage(): JSX.Element {
 
       <p className="text-sm text-center text-[var(--color-ink-3)]">
         Already have an account?{' '}
-        <Link href={`/auth/signin${next !== '/sl' ? `?next=${next}` : ''}`} className="text-[var(--color-green)] hover:underline font-medium">
+        <Link href={`/auth/signin${next ? `?next=${next}` : ''}`} className="text-[var(--color-green)] hover:underline font-medium">
           Sign in
         </Link>
       </p>

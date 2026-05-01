@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // 2. Validate country segment — redirect unknown codes to home
+  // 2. Validate country segment — redirect unknown codes to home; persist valid ones
   const countryMatch = pathname.match(/^\/([a-z]{2,3})(\/|$)/);
   if (countryMatch) {
     const segment = countryMatch[1]!;
@@ -42,6 +42,13 @@ export async function middleware(request: NextRequest) {
       !(ACTIVE_COUNTRY_CODES as string[]).includes(segment)
     ) {
       return NextResponse.redirect(new URL('/', request.url));
+    }
+    if ((ACTIVE_COUNTRY_CODES as string[]).includes(segment)) {
+      supabaseResponse.cookies.set('preferred_country', segment, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: 'lax',
+      });
     }
   }
 
