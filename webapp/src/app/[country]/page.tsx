@@ -40,7 +40,7 @@ export default async function CountryHomePage({ params }: Props): Promise<JSX.El
         <h2 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)] mb-4">
           Browse by topic
         </h2>
-        <CategoryGrid categories={categories} />
+        <CategoryGrid categories={categories} country={country} />
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">

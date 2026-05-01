@@ -1,10 +1,13 @@
 import type { JSX } from 'react';
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { ACTIVE_COUNTRY_CODES } from '@opensteps/constants';
 
 export const metadata: Metadata = { title: 'Editor Panel — OpenSteps' };
+export const revalidate = 0;
 
 export default async function AdminPage(): Promise<JSX.Element> {
   const supabase = await createClient();
@@ -12,16 +15,19 @@ export default async function AdminPage(): Promise<JSX.Element> {
   if (!user) redirect('/auth/signin?next=/admin');
 
   const { data: verifier } = await supabase.from('verifiers').select('role').eq('id', user.id).single();
-  if (verifier?.role !== 'editor') redirect('/dashboard');
+  if (verifier?.role !== 'editor') notFound();
+
+  const admin = createAdminClient();
+  const country = ACTIVE_COUNTRY_CODES[0] ?? 'sl';
 
   const [
     { count: pendingCount },
     { count: editRequestCount },
     { data: recentFeed },
   ] = await Promise.all([
-    supabase.from('guides').select('*', { count: 'exact', head: true }).eq('published', false),
-    supabase.from('edit_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('community_feed').select('*').order('created_at', { ascending: false }).limit(10),
+    admin.from('guides').select('*', { count: 'exact', head: true }).eq('published', false),
+    admin.from('edit_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    admin.from('community_feed').select('*').order('created_at', { ascending: false }).limit(10),
   ]);
 
   return (
@@ -34,7 +40,7 @@ export default async function AdminPage(): Promise<JSX.Element> {
       {/* Action cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          href="/sl/verify"
+          href={`/${country}/verify`}
           className="group p-5 bg-white rounded-xl border border-[var(--color-surface3)] hover:border-[var(--color-green)] transition-colors space-y-2"
         >
           <div className="flex items-center justify-between">

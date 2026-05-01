@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { Category } from '@opensteps/types';
 import { CATEGORY_MAP } from '@opensteps/constants';
 
-export default function CategoryGrid({ categories }: { categories: Category[] }): JSX.Element {
+export default function CategoryGrid({ categories, country }: { categories: Category[]; country: string }): JSX.Element {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
       {categories.map((cat) => {
@@ -12,7 +12,7 @@ export default function CategoryGrid({ categories }: { categories: Category[] })
         return (
           <Link
             key={cat.key}
-            href={`/sl/${cat.key}`}
+            href={`/${country}/category/${cat.key}`}
             className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-white border border-[var(--color-surface3)] hover:border-[var(--color-green)] hover:shadow-sm transition-all text-center"
           >
             <svg

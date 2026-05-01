@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { EditRequestList, type EditRequestItem } from '@/components/admin/EditRequestList';
 
 export const metadata: Metadata = { title: 'Edit Requests — OpenSteps' };
@@ -16,7 +17,8 @@ export default async function EditRequestsPage(): Promise<JSX.Element> {
   const { data: verifier } = await supabase.from('verifiers').select('role').eq('id', user.id).single();
   if (verifier?.role !== 'editor') redirect('/dashboard');
 
-  const { data: requests } = await supabase
+  const admin = createAdminClient();
+  const { data: requests } = await admin
     .from('edit_requests')
     .select(`
       id, reason, status, created_at,
