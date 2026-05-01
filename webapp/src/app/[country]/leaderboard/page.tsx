@@ -6,6 +6,7 @@ import { getTopVerifiers } from '@opensteps/supabase';
 import { CATEGORY_MAP, COUNTRY_MAP } from '@opensteps/constants';
 import type { CategoryKey, CountryCode, Verifier } from '@opensteps/types';
 import { formatLeone } from '@opensteps/types';
+import { StatsBlock } from '@/components/leaderboard/StatsBlock';
 
 export const metadata: Metadata = { title: 'Leaderboard — OpenSteps' };
 export const revalidate = 120;
@@ -33,16 +34,6 @@ function RoleBadge({ role }: { role: string }) {
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
     <h2 className="text-[10px] font-mono uppercase tracking-widest text-[var(--color-ink-4)] mb-4">{children}</h2>
-  );
-}
-
-function StatBox({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
-  return (
-    <div className="bg-white rounded-xl border border-[var(--color-surface3)] p-4 text-center space-y-1">
-      <p className="text-2xl font-bold text-[var(--color-ink)] tabular-nums">{value}</p>
-      <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-ink-4)]">{label}</p>
-      {sub && <p className="text-[10px] text-[var(--color-ink-4)]">{sub}</p>}
-    </div>
   );
 }
 
@@ -172,12 +163,12 @@ export default async function LeaderboardPage({ params }: Props): Promise<JSX.El
       </div>
 
       {/* ── Platform stats ─────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatBox label="Guides" value={totalGuideCount ?? 0} />
-        <StatBox label="Verifications" value={totalVerifications ?? 0} />
-        <StatBox label="Contributors" value={verifiers.length} />
-        <StatBox label="Tips" value={totalTipCount ?? 0} />
-      </div>
+      <StatsBlock stats={[
+        { label: 'Guides', value: totalGuideCount ?? 0 },
+        { label: 'Verifications', value: totalVerifications ?? 0 },
+        { label: 'Contributors', value: verifiers.length },
+        { label: 'Tips', value: totalTipCount ?? 0 },
+      ]} />
 
       {/* ── Top Contributors ───────────────────────────────────────────────── */}
       <section>
