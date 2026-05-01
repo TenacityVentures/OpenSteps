@@ -19,6 +19,44 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.0] — 2026-05-01
+
+### Added
+
+#### Country switching
+- **`CountrySwitcher` component** — searchable dropdown in `AppHeader`; clicking a country navigates and writes a `preferred_country` cookie (1-year, `SameSite=Lax`)
+- **`preferred_country` cookie** — middleware refreshes it on every valid country request; root `page.tsx` reads it to redirect on first visit; middleware already handled session refresh
+- **Sign-up country field** — dropdown shown when more than one country is active; sets `preferred_country` cookie on account creation
+
+#### Verify queue — swipeable cards
+- **Drag + fling gesture** — `SwipeStack` card responds to pointer events (mouse, touch, stylus); dragging > 80 px triggers a fling animation (220 ms cubic-bezier) then advances or retreats
+- **Keyboard navigation** — left/right arrow keys navigate the queue
+- **Visual hints** — subtle "← Back" / "Next →" overlays appear while dragging; "swipe to navigate" hint shown below card when multiple guides exist
+- **`onRetreat` prop** wired through `VerifyQueue` so backward navigation works
+
+#### Footer
+- **`AppFooter` component** — country-aware footer on all `[country]/*` routes; shows country flag + name, nav links (Browse, Verify, Contribute, Leaderboard), legal links, and copyright
+
+#### Pages & UI
+- **Category page** (`/[country]/category/[key]`) — breadcrumb, category icon, guide count, empty-state CTA
+- **Search** — `SearchInput` upgraded to live debounced search (320 ms); updates URL with `router.replace` as user types; search page gets its own `layout.tsx`; empty state shows suggested search terms
+- **Search page** — removed inline `<AppHeader />` (now via layout), improved empty and no-results states
+- **Admin & dashboard layouts** — `app/admin/layout.tsx` and `app/dashboard/layout.tsx` added so `AppHeader` renders on those routes (fixes missing header)
+
+### Fixed
+- **`/admin` non-editor redirect** — changed from `redirect('/dashboard')` to `notFound()` (clearer intent)
+- **`/admin/edit-requests` RLS** — switched to `createAdminClient()` so editors can see all requests (policy previously only showed own requests)
+- **Upvote persistence** — added `revalidatePath` to `upvoteTip`, `removeUpvote`, and `addTip` server actions so ISR cache is busted immediately
+- **Category links 404** — `CategoryGrid` now receives `country` prop and generates `/${country}/category/${key}` links instead of hardcoded `/sl/${key}`
+- **Hardcoded `/sl` links removed** — `GuideHeader`, `UserMenu`, `auth/signin`, `auth/signup`, `auth/callback`, `auth/layout`, `dashboard/page` all updated to use cookie-derived or path-derived country
+- **PendingList clickable rows** — entire desktop table row now navigates to the review page, not just the "Review →" cell
+- **Verify editor edit** — `updateStep` and `updateDocument` server actions added; `ReviewPanel` now supports inline editing of step titles, step descriptions, document labels, and required/optional toggle
+
+### Database
+- No schema changes in this release (all additions were in 0.3.0)
+
+---
+
 ## [0.3.0] — 2026-04-28
 
 ### Added — Production auth, multi-country routing, verification & community features
