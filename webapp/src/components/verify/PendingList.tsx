@@ -48,9 +48,19 @@ export function PendingList({ guides, country }: Props): JSX.Element | null {
           </thead>
           <tbody className="divide-y divide-[var(--color-surface3)]">
             {guides.map((g) => (
-              <tr key={g.id} className="hover:bg-[var(--color-surface2)] transition-colors">
+              <tr
+                key={g.id}
+                className="hover:bg-[var(--color-surface2)] transition-colors cursor-pointer"
+                onClick={() => { window.location.href = `/${country}/verify/${g.slug}`; }}
+              >
                 <td className="px-4 py-3 font-medium text-[var(--color-ink)] max-w-[200px] truncate">
-                  {g.title}
+                  <Link
+                    href={`/${country}/verify/${g.slug}`}
+                    className="hover:text-[var(--color-green)] transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {g.title}
+                  </Link>
                 </td>
                 <td className="px-4 py-3 text-[var(--color-ink-3)]">
                   {CATEGORY_LABEL[g.category] ?? g.category}
@@ -68,6 +78,7 @@ export function PendingList({ guides, country }: Props): JSX.Element | null {
                   <Link
                     href={`/${country}/verify/${g.slug}`}
                     className="text-xs text-[var(--color-green)] hover:underline"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     Review →
                   </Link>
