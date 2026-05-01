@@ -15,7 +15,6 @@ interface Props {
 
 export function VerifyQueue({ guides, country }: Props): JSX.Element {
   const [cardIndex, setCardIndex] = useState(0);
-  const remaining = guides.slice(cardIndex);
 
   return (
     <div className="space-y-10">
@@ -29,9 +28,9 @@ export function VerifyQueue({ guides, country }: Props): JSX.Element {
         />
       </section>
 
-      {remaining.length > 0 && (
+      {guides.length > 0 && (
         <section>
-          <PendingList guides={remaining} country={country} />
+          <PendingList guides={guides} country={country} />
         </section>
       )}
     </div>

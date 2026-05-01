@@ -1,7 +1,7 @@
 'use client';
 
-import type { JSX } from 'react';
-import { useState, useTransition, useRef, useEffect, useCallback } from 'react';
+import type { JSX, CSSProperties } from 'react';
+import { useState, useTransition, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { Guide } from '@opensteps/types';
@@ -18,8 +18,10 @@ interface Props {
   country: string;
 }
 
-const SWIPE_THRESHOLD = 80;
-const FLING_DISTANCE = 500;
+const SWIPE_THRESHOLD = 72;
+const FLING_PX = 520;
+
+type Phase = 'idle' | 'dragging' | 'exiting';
 
 export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }: Props): JSX.Element {
   const router = useRouter();
@@ -28,37 +30,52 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
   const [reason, setReason] = useState('');
   const [actionError, setActionError] = useState<string | null>(null);
 
-  // Drag state
   const dragging = useRef(false);
   const startX = useRef(0);
   const [offset, setOffset] = useState(0);
-  const [animating, setAnimating] = useState(false);
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [exitDir, setExitDir] = useState<1 | -1>(1);
 
   const guide = guides[cardIndex];
+  const nextGuide = guides[cardIndex + 1];
 
-  // Reset card position whenever the guide changes
+  // Reset card state whenever the displayed card changes
   useEffect(() => {
     setOffset(0);
-    setAnimating(false);
+    setPhase('idle');
     setFlagMode(false);
     setReason('');
     setActionError(null);
   }, [cardIndex]);
 
-  const fling = useCallback((direction: 'left' | 'right', afterFling: () => void) => {
-    setAnimating(true);
-    setOffset(direction === 'left' ? -FLING_DISTANCE : FLING_DISTANCE);
-    setTimeout(() => {
-      afterFling();
-      // offset + animating reset is handled by the cardIndex useEffect above
-    }, 220);
-  }, []);
+  // Keyboard navigation
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (phase === 'exiting') return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === 'ArrowLeft' && guides.length > 1) triggerExit(-1);
+      if (e.key === 'ArrowRight' && cardIndex > 0) triggerExit(1);
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, cardIndex, guides.length]);
 
+  function triggerExit(dir: 1 | -1) {
+    setExitDir(dir);
+    setPhase('exiting');
+    setTimeout(() => {
+      if (dir === -1) onAdvance();
+      else onRetreat();
+    }, 230);
+  }
+
+  // Pointer handlers — only on the front card
   function onPointerDown(e: React.PointerEvent<HTMLDivElement>) {
-    if (isPending || animating || !guide) return;
+    if (phase !== 'idle' || isPending) return;
     dragging.current = true;
     startX.current = e.clientX;
-    setAnimating(false);
+    setPhase('dragging');
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
   }
 
@@ -70,39 +87,22 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
   function onPointerUp(e: React.PointerEvent<HTMLDivElement>) {
     if (!dragging.current) return;
     dragging.current = false;
-    const finalOffset = e.clientX - startX.current;
-
-    if (finalOffset < -SWIPE_THRESHOLD) {
-      // Swipe left → next
-      fling('left', onAdvance);
-    } else if (finalOffset > SWIPE_THRESHOLD && cardIndex > 0) {
-      // Swipe right → previous
-      fling('right', onRetreat);
+    const dx = e.clientX - startX.current;
+    if (dx < -SWIPE_THRESHOLD) {
+      triggerExit(-1);
+    } else if (dx > SWIPE_THRESHOLD && cardIndex > 0) {
+      triggerExit(1);
     } else {
-      // Snap back
-      setAnimating(true);
+      setPhase('idle');
       setOffset(0);
-      setTimeout(() => setAnimating(false), 200);
     }
   }
 
   function onPointerCancel() {
     dragging.current = false;
-    setAnimating(true);
+    setPhase('idle');
     setOffset(0);
-    setTimeout(() => setAnimating(false), 200);
   }
-
-  // Keyboard navigation
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if (e.key === 'ArrowRight' && cardIndex > 0) fling('right', onRetreat);
-      if (e.key === 'ArrowLeft') fling('left', onAdvance);
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [cardIndex, fling, onAdvance, onRetreat]);
 
   function handleApprove() {
     if (!guide) return;
@@ -110,10 +110,10 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
     startTransition(async () => {
       try {
         await editorApprove(guide.id);
-        fling('left', onAdvance);
+        triggerExit(-1);
         router.refresh();
       } catch (e) {
-        setActionError(e instanceof Error ? e.message : 'Failed to approve. Please try again.');
+        setActionError(e instanceof Error ? e.message : 'Failed to approve.');
       }
     });
   }
@@ -127,70 +127,86 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
         await editorFlag(guide.id, reason || 'Needs revision');
         setFlagMode(false);
         setReason('');
-        fling('left', onAdvance);
+        triggerExit(-1);
       } catch (e) {
-        setActionError(e instanceof Error ? e.message : 'Failed to flag. Please try again.');
+        setActionError(e instanceof Error ? e.message : 'Failed to flag.');
       }
     });
   }
 
   if (!guide) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-3 text-center">
-        <div className="w-16 h-16 rounded-full bg-[var(--color-green-tint)] flex items-center justify-center text-3xl">
-          ✓
-        </div>
+      <div className="flex flex-col items-center justify-center py-24 space-y-3 text-center">
+        <div className="w-14 h-14 rounded-full bg-[var(--color-green-tint)] flex items-center justify-center text-2xl">✓</div>
         <h3 className="text-lg font-semibold text-[var(--color-ink)]">All caught up!</h3>
         <p className="text-sm text-[var(--color-ink-3)]">No more guides waiting for review.</p>
-        <Link href={`/${country}`} className="mt-2 text-sm text-[var(--color-green)] hover:underline">
+        <Link href={`/${country}`} className="mt-1 text-sm text-[var(--color-green)] hover:underline">
           Browse published guides →
         </Link>
       </div>
     );
   }
 
-  // Derived drag visual hints
-  const clampedOffset = Math.max(-200, Math.min(200, offset));
-  const rotate = clampedOffset * 0.04;
-  const opacity = 1 - Math.abs(clampedOffset) / 400;
-  const showNext = clampedOffset < -30;
-  const showPrev = clampedOffset > 30 && cardIndex > 0;
+  // ── Derived styles ────────────────────────────────────────────────────────
+
+  // How much the drag has "committed" (0 → 1 over first 100px)
+  const dragProgress = phase === 'dragging' ? Math.min(Math.abs(offset) / 100, 1) : 0;
+
+  // Behind card: starts at scale 0.96 / translateY 10px, rises toward full as you drag
+  const behindScale   = phase === 'exiting' ? 1 : 0.96 + dragProgress * 0.04;
+  const behindY       = phase === 'exiting' ? 0 : 10  - dragProgress * 10;
+  const behindOpacity = phase === 'exiting' ? 1 : 0.72 + dragProgress * 0.28;
+
+  const behindStyle: CSSProperties = {
+    position: 'absolute',
+    inset: 0,
+    zIndex: 1,
+    transform: `scale(${behindScale}) translateY(${behindY}px)`,
+    transformOrigin: 'center bottom',
+    opacity: behindOpacity,
+    transition:
+      phase === 'exiting'
+        ? 'transform 0.28s cubic-bezier(0.22,1,0.36,1), opacity 0.2s ease-out'
+        : phase === 'idle'
+        ? 'transform 0.22s ease-out, opacity 0.22s ease-out'
+        : 'none',
+    pointerEvents: 'none',
+  };
+
+  // Front card: follows drag, then flings off
+  const frontX     = phase === 'exiting' ? exitDir * FLING_PX : offset;
+  const frontRot   = phase === 'exiting' ? exitDir * 14 : offset * 0.04;
+  const frontOpacity = phase === 'exiting' ? 0 : 1 - Math.abs(offset) / 450;
+
+  const frontStyle: CSSProperties = {
+    position: 'relative',
+    zIndex: 2,
+    transform: `translateX(${frontX}px) rotate(${frontRot}deg)`,
+    opacity: frontOpacity,
+    transition:
+      phase === 'exiting'
+        ? 'transform 0.22s ease-in, opacity 0.18s ease-in'
+        : 'none',
+    cursor: phase === 'dragging' ? 'grabbing' : 'grab',
+    touchAction: 'pan-y',
+    userSelect: 'none',
+    willChange: 'transform',
+  };
 
   return (
     <div className="space-y-4">
-      {/* Card wrapper — handles drag */}
-      <div className="relative select-none">
-        {/* Direction hint overlays */}
-        {showNext && (
-          <div
-            className="absolute inset-0 z-10 rounded-2xl flex items-center justify-end pr-6 pointer-events-none"
-            style={{ opacity: Math.min(1, Math.abs(clampedOffset) / 120) }}
-          >
-            <span className="text-xs font-mono font-bold text-[var(--color-ink-3)] bg-white/80 px-2 py-1 rounded-lg">
-              Next →
-            </span>
-          </div>
-        )}
-        {showPrev && (
-          <div
-            className="absolute inset-0 z-10 rounded-2xl flex items-center justify-start pl-6 pointer-events-none"
-            style={{ opacity: Math.min(1, Math.abs(clampedOffset) / 120) }}
-          >
-            <span className="text-xs font-mono font-bold text-[var(--color-ink-3)] bg-white/80 px-2 py-1 rounded-lg">
-              ← Back
-            </span>
+      {/* ── Card stack ───────────────────────────────────────────────── */}
+      <div className="relative overflow-visible pb-2">
+        {/* Behind card — full GuideCard, slightly shrunk and shifted */}
+        {nextGuide && (
+          <div style={behindStyle}>
+            <GuideCard guide={nextGuide} index={cardIndex + 1} total={guides.length} />
           </div>
         )}
 
+        {/* Front card — interactive */}
         <div
-          className="touch-pan-y"
-          style={{
-            transform: `translateX(${animating ? 0 : clampedOffset}px) rotate(${animating ? 0 : rotate}deg)`,
-            opacity: animating ? 1 : opacity,
-            transition: animating ? 'transform 0.22s cubic-bezier(0.22,1,0.36,1), opacity 0.22s ease' : 'none',
-            cursor: dragging.current ? 'grabbing' : 'grab',
-            willChange: 'transform',
-          }}
+          style={frontStyle}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -200,13 +216,14 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
         </div>
       </div>
 
-      {/* Swipe hint — only when multiple guides */}
+      {/* ── Swipe hint ───────────────────────────────────────────────── */}
       {guides.length > 1 && (
         <p className="text-center text-[10px] font-mono text-[var(--color-ink-4)] tracking-wider select-none">
-          ← swipe to navigate · {cardIndex + 1} of {guides.length} →
+          {cardIndex > 0 ? '← ' : ''}swipe or use arrow keys{guides[cardIndex + 1] ? ' →' : ''}
         </p>
       )}
 
+      {/* ── Flag reason input ────────────────────────────────────────── */}
       {flagMode && (
         <div className="flex gap-2">
           <input
@@ -229,11 +246,12 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
 
       {actionError && <p className="text-xs text-[var(--color-red)]">{actionError}</p>}
 
+      {/* ── Action buttons ───────────────────────────────────────────── */}
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={handleFlag}
-          disabled={isPending || animating}
+          disabled={isPending || phase === 'exiting'}
           className="flex-1 py-2.5 rounded-xl border-2 border-[var(--color-red-soft)] bg-[var(--color-red-soft)] text-[var(--color-red)] text-sm font-medium hover:bg-[var(--color-red)] hover:text-white hover:border-[var(--color-red)] transition-colors disabled:opacity-50"
         >
           {flagMode ? 'Confirm flag' : 'Flag'}
@@ -249,7 +267,7 @@ export function SwipeStack({ guides, cardIndex, onAdvance, onRetreat, country }:
         <button
           type="button"
           onClick={handleApprove}
-          disabled={isPending || animating}
+          disabled={isPending || phase === 'exiting'}
           className="flex-1 py-2.5 rounded-xl bg-[var(--color-green)] text-white text-sm font-medium hover:bg-[var(--color-green-mid)] transition-colors disabled:opacity-50"
         >
           {isPending ? 'Saving…' : 'Approve'}
