@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AppHeader from '@/components/layout/AppHeader';
+import AppFooter from '@/components/layout/AppFooter';
 import { CountryProvider } from '@/components/CountryProvider';
 import { COUNTRY_MAP, ACTIVE_COUNTRY_CODES } from '@opensteps/constants';
 import type { CountryCode } from '@opensteps/types';
@@ -32,6 +33,7 @@ export default async function CountryLayout({ children, params }: Props): Promis
     <CountryProvider country={meta}>
       <AppHeader />
       <main>{children}</main>
+      <AppFooter country={meta} />
     </CountryProvider>
   );
 }
