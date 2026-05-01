@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AppHeader from '@/components/layout/AppHeader';
 import AppFooter from '@/components/layout/AppFooter';
+import { BottomNav } from '@/components/layout/BottomNav';
 import { CountryProvider } from '@/components/CountryProvider';
 import { COUNTRY_MAP, ACTIVE_COUNTRY_CODES } from '@opensteps/constants';
 import type { CountryCode } from '@opensteps/types';
@@ -32,8 +33,9 @@ export default async function CountryLayout({ children, params }: Props): Promis
   return (
     <CountryProvider country={meta}>
       <AppHeader />
-      <main>{children}</main>
+      <main className="pb-16 sm:pb-0">{children}</main>
       <AppFooter country={meta} />
+      <BottomNav />
     </CountryProvider>
   );
 }
