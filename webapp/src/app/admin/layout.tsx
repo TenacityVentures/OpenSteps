@@ -1,0 +1,11 @@
+import type { JSX } from 'react';
+import AppHeader from '@/components/layout/AppHeader';
+
+export default function AdminLayout({ children }: { children: React.ReactNode }): JSX.Element {
+  return (
+    <>
+      <AppHeader />
+      <main>{children}</main>
+    </>
+  );
+}
