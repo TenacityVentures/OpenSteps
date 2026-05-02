@@ -94,9 +94,9 @@ function SignInForm(): JSX.Element {
   );
 }
 
-export default function SignInPage(): JSX.Element {
+export default function SignInPage() {
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       <SignInForm />
     </Suspense>
   );

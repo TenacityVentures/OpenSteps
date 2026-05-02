@@ -141,9 +141,9 @@ function SignUpForm(): JSX.Element {
   );
 }
 
-export default function SignUpPage(): JSX.Element {
+export default function SignUpPage() {
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       <SignUpForm />
     </Suspense>
   );
