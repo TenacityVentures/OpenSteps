@@ -1,7 +1,7 @@
 'use client';
 
 import type { JSX } from 'react';
-import { useState, useTransition } from 'react';
+import { Suspense, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -10,7 +10,7 @@ import type { CountryCode } from '@opensteps/types';
 
 const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
-export default function SignUpPage(): JSX.Element {
+function SignUpForm(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? null;
@@ -138,5 +138,13 @@ export default function SignUpPage(): JSX.Element {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function SignUpPage(): JSX.Element {
+  return (
+    <Suspense>
+      <SignUpForm />
+    </Suspense>
   );
 }
