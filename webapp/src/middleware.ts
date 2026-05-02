@@ -52,8 +52,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 3. Protect /dashboard and /admin — require auth
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
+  // 3. Protect /dashboard, /admin, and /[country]/verify — require auth
+  const isVerify = /^\/[a-z]{2,3}\/verify(\/|$)/.test(pathname);
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || isVerify) {
     if (!user) {
       const redirectUrl = new URL('/auth/signin', request.url);
       redirectUrl.searchParams.set('next', pathname);
