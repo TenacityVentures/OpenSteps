@@ -82,9 +82,14 @@ export default function AppFooter({ country }: Props): JSX.Element {
           <p className="text-[11px] font-mono text-[var(--color-ink-4)]">
             © {new Date().getFullYear()} OpenSteps · Not affiliated with any government body
           </p>
-          <p className="text-[11px] font-mono text-[var(--color-ink-4)]">
-            Built with ♥ for {country.name}
-          </p>
+          <a
+            href="https://10na.city"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] font-mono text-[var(--color-ink-4)] hover:text-[var(--color-green)] transition-colors"
+          >
+            Made with tenacity · 10na.city
+          </a>
         </div>
       </div>
     </footer>

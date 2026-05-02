@@ -11,8 +11,20 @@ export default function AuthLayout({ children }: { children: React.ReactNode }):
         </Link>
       </header>
       <main className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-sm space-y-6">
           {children}
+          <p className="text-center text-[11px] font-mono text-[var(--color-ink-4)]">
+            A{' '}
+            <a
+              href="https://10na.city"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[var(--color-green)] transition-colors"
+            >
+              10na.city
+            </a>
+            {' '}product
+          </p>
         </div>
       </main>
     </div>
