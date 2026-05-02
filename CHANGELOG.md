@@ -14,8 +14,53 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 - SMS OTP authentication via Supabase × Twilio (Africell / Orange SL)
 - Krio language stub
 - ISR revalidation webhook
-- OpenGraph / WhatsApp share metadata on guide pages
 - Additional country activations (Nigeria, Ghana, South Africa)
+
+---
+
+## [0.5.0] — 2026-05-02
+
+### Added
+
+#### Accessibility (WCAG 2.1 AA)
+- **Skip-to-content link** — hidden until focused; first Tab press from any page jumps to `#main-content`
+- **`CountrySwitcher` keyboard nav** — `↑↓` arrows move through options, `Escape` closes and returns focus to trigger; `aria-activedescendant` tracks keyboard position; full `role="combobox"` / `role="listbox"` / `role="option"` semantics; `aria-expanded` + `aria-controls`
+- **`UserMenu` keyboard nav** — `role="menu"` / `role="menuitem"`, `↑↓` navigate items, `Escape` closes and returns focus, menu opens with first item focused; `aria-haspopup="menu"` + `aria-expanded` on trigger
+- **`SwipeStack` screen reader** — `role="region"` wraps the queue; `aria-live="polite"` announces "Guide 2 of 5: {title}" on every card change; `tabIndex=0` + `aria-label` on the swipeable card; flag input gets `<label>` + `aria-describedby` hint; `role="alert"` on error messages
+- **`AppHeader` nav** — `aria-current="page"` on the active link; `aria-label` on brand link and `<nav>`
+- **`BottomNav`** — `aria-label="Mobile navigation"` on `<nav>`; `aria-current="page"` + `aria-label` on every link; decorative icons marked `aria-hidden`
+- **`prefers-reduced-motion`** — global CSS rule disables all animations and transitions for users who prefer reduced motion
+- **`:focus-visible` ring** — consistent 2px green outline on every interactive element; removed on mouse clicks via `:focus:not(:focus-visible)`
+
+#### Production infrastructure
+- **Security headers** (`next.config.ts`) — `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, `Content-Security-Policy`
+- **`robots.ts`** — disallows `/admin` and `/dashboard`; points to sitemap
+- **`sitemap.ts`** — dynamic sitemap covering all published guides, every active country × route, and all category pages
+- **`manifest.ts`** — PWA web-app manifest (standalone display, green theme `#1a6b43`, SVG icons)
+- **RSS feed** (`/[country]/feed`) — RSS 2.0 per country; `Cache-Control: s-maxage=3600`; autodiscovery `<link>` injected via `alternates.types` in country layout metadata
+- **`not-found.tsx`** — clean 404 page with home + search CTAs
+- **`error.tsx`** — global error boundary with digest reference for support
+- **`app/icon.svg`** — favicon (dashed circle + checkmark) served by Next.js automatically
+
+#### Structured data & meta
+- **`Organization` JSON-LD** — injected into root layout (every page)
+- **`HowTo` JSON-LD** — generated from guide steps on every guide detail page; enables Google rich results
+- **`BreadcrumbList` JSON-LD** — on every guide detail page
+- **`metadataBase`** — set from `NEXT_PUBLIC_SITE_URL`; fixes relative URL resolution in OG tags
+- **OpenGraph + Twitter card** improvements — `og:type: article`, `og:url`, `og:image` fallback, `twitter:card: summary` on guide pages
+
+#### Leaderboard
+- **Layout toggle in header** — toggle moved inline with "Leaderboard" heading (top right); switching to Graph mode applies graph-paper background to the entire page and fades white section backgrounds simultaneously (`transition-colors duration-300`)
+- **`LeaderboardClient`** — all rendering extracted into a client component; server page is now a thin data-fetching wrapper
+
+#### Fixes
+- **`TopContributors`** — "See all →" link now uses country-aware href (`/${country}/leaderboard`) instead of relative `leaderboard`
+- **`AppFooter`** — corrected GitHub link to `tenacityventures/opensteps`
+- **`extractCountry`** in `AppHeader` — validates against `ACTIVE_COUNTRY_CODES` so `/legal/*` paths no longer incorrectly parse `le` as a country code
+- **CHANGELOG links** — corrected repo owner from `opensteps-sl` to `tenacityventures`
+
+### Database
+- No schema changes in this release
 
 ---
 
@@ -204,7 +249,9 @@ Versioning follows [Semantic Versioning](https://semver.org/).
 
 ---
 
-[Unreleased]: https://github.com/opensteps-sl/opensteps/compare/v0.3.0...HEAD
-[0.3.0]: https://github.com/opensteps-sl/opensteps/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/opensteps-sl/opensteps/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/opensteps-sl/opensteps/releases/tag/v0.1.0
+[Unreleased]: https://github.com/tenacityventures/opensteps/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/tenacityventures/opensteps/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/tenacityventures/opensteps/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/tenacityventures/opensteps/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/tenacityventures/opensteps/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/tenacityventures/opensteps/releases/tag/v0.1.0

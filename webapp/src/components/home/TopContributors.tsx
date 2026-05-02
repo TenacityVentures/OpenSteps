@@ -1,15 +1,26 @@
+'use client'
+
 import type { JSX } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import type { Verifier } from '@opensteps/types';
 
+function extractCountry(pathname: string): string {
+  const match = pathname.match(/^\/([a-z]{2})(\/|$)/);
+  return match?.[1] ?? 'sl';
+}
+
 export function TopContributors({ verifiers }: { verifiers: Verifier[] }): JSX.Element {
+  const pathname = usePathname();
+  const country = extractCountry(pathname);
+
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-mono uppercase tracking-widest text-[var(--color-ink-3)]">
           Top contributors
         </h3>
-        <Link href="leaderboard" className="text-xs text-[var(--color-green)] hover:underline">
+        <Link href={`/${country}/leaderboard`} className="text-xs text-[var(--color-green)] hover:underline">
           See all →
         </Link>
       </div>

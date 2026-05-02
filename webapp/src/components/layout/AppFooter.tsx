@@ -16,7 +16,7 @@ const NAV_LINKS = [
 const LEGAL_LINKS = [
   { label: 'Privacy', href: '/legal/privacy' },
   { label: 'Terms', href: '/legal/terms' },
-  { label: 'GitHub', href: 'https://github.com/anthropics/opensteps', external: true },
+  { label: 'GitHub', href: 'https://github.com/tenacityventures/opensteps', external: true },
 ];
 
 export default function AppFooter({ country }: Props): JSX.Element {
