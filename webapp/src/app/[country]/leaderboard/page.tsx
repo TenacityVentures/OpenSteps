@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { getTopVerifiers } from '@opensteps/supabase';
 import { COUNTRY_MAP } from '@opensteps/constants';
-import type { CountryCode, Verifier } from '@opensteps/types';
+import type { CountryCode } from '@opensteps/types';
 import {
   LeaderboardClient,
   type TipperStat,

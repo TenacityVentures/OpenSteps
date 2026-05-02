@@ -26,7 +26,7 @@ export function RequirementsStep({ draft, updateDraft }: Props): JSX.Element {
   function add() {
     const trimmed = newLabel.trim();
     if (!trimmed) return;
-    updateDraft({ documents: [...docs, { id: crypto.randomUUID(), label: trimmed, required: true }] });
+    updateDraft({ documents: [...docs, { ...newDoc(), label: trimmed }] });
     setNewLabel('');
   }
 

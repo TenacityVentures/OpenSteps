@@ -1,9 +1,8 @@
 import type { JSX } from 'react';
 import type { Guide, Verifier, BudgetLine, DocumentNeeded } from '@opensteps/types';
-import { formatLeone, formatTrustScore, formatDate } from '@/lib/format';
+import { formatLeone, formatDate } from '@/lib/format';
 import TrustBar from '@/components/ui/TrustBar';
 import VerifierList from './VerifierList';
-import BudgetBreakdown from './BudgetBreakdown';
 
 export default function GuideTrustPanel({
   guide,

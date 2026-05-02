@@ -20,7 +20,6 @@ import GuideTOC from '@/components/guide/GuideTOC';
 import GuideTrustPanel from '@/components/guide/GuideTrustPanel';
 import StepList from '@/components/guide/StepList';
 import WhatToBring from '@/components/guide/WhatToBring';
-import BudgetBreakdown from '@/components/guide/BudgetBreakdown';
 import CommunityTips from '@/components/guide/CommunityTips';
 import EvidenceThumbs from '@/components/guide/EvidenceThumbs';
 import RelatedGuides from '@/components/guide/RelatedGuides';
