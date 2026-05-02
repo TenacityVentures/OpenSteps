@@ -1,6 +1,6 @@
 'use client';
 
-import type { JSX } from 'react';
+import type { JSX, ReactElement } from 'react';
 import { Suspense, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -141,7 +141,7 @@ function SignUpForm(): JSX.Element {
   );
 }
 
-export default function SignUpPage() {
+export default function SignUpPage(): ReactElement {
   return (
     <Suspense fallback={null}>
       <SignUpForm />

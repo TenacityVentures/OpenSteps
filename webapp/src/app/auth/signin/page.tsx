@@ -1,6 +1,6 @@
 'use client';
 
-import type { JSX } from 'react';
+import type { JSX, ReactElement } from 'react';
 import { Suspense, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -94,7 +94,7 @@ function SignInForm(): JSX.Element {
   );
 }
 
-export default function SignInPage() {
+export default function SignInPage(): ReactElement {
   return (
     <Suspense fallback={null}>
       <SignInForm />
