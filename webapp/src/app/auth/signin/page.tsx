@@ -1,16 +1,14 @@
 'use client';
 
 import type { JSX } from 'react';
-import { useState, useTransition } from 'react';
+import { Suspense, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
-export const dynamic = 'force-dynamic';
-
-export default function SignInPage(): JSX.Element {
+function SignInForm(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? '/';
@@ -93,5 +91,13 @@ export default function SignInPage(): JSX.Element {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function SignInPage(): JSX.Element {
+  return (
+    <Suspense fallback={null}>
+      <SignInForm />
+    </Suspense>
   );
 }
