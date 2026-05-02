@@ -58,6 +58,7 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       const redirectUrl = new URL('/auth/signin', request.url);
       redirectUrl.searchParams.set('next', pathname);
+      if (isVerify) redirectUrl.searchParams.set('toast', 'verify');
       return NextResponse.redirect(redirectUrl);
     }
   }

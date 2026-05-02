@@ -2,6 +2,7 @@ import type { JSX } from 'react';
 import type { Metadata } from 'next';
 import { Inter, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { Toaster } from '@/components/ui/Toaster';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -69,7 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
           Skip to main content
         </a>
 
-        {children}
+        <Toaster>
+          {children}
+        </Toaster>
 
         <script
           type="application/ld+json"

@@ -19,7 +19,7 @@ export default async function ContributePage({ params }: Props): Promise<JSX.Ele
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/auth/signin?next=/${country}/contribute`);
+    redirect(`/auth/signin?next=/${country}/contribute&toast=contribute`);
   }
 
   return <ContributeWizard />;

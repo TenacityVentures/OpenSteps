@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { createClient } from '@/lib/supabase/client';
+import { useToast } from '@/components/ui/Toaster';
 
 export function UserMenu(): JSX.Element {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -63,6 +65,7 @@ export function UserMenu(): JSX.Element {
     const supabase = createClient();
     await supabase.auth.signOut();
     close();
+    toast("You've been signed out");
     router.push('/');
     router.refresh();
   }

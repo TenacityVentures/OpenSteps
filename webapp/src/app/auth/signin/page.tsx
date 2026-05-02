@@ -1,10 +1,11 @@
 'use client';
 
 import type { JSX } from 'react';
-import { Suspense, useState, useTransition } from 'react';
+import { Suspense, useState, useTransition, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useToast, TOAST_MESSAGES } from '@/components/ui/Toaster';
 
 const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
@@ -12,6 +13,15 @@ function SignInForm(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? '/';
+  const toastKey = searchParams.get('toast');
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!toastKey) return;
+    const entry = TOAST_MESSAGES[toastKey];
+    if (entry) toast(entry.message, entry.type);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

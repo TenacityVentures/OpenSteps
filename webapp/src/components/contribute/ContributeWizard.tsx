@@ -4,6 +4,7 @@ import type { JSX } from 'react';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/Toaster';
 import type { GuideDraft } from './types';
 import { EMPTY_DRAFT, WIZARD_STEPS } from './types';
 import { BasicsStep } from './steps/BasicsStep';
@@ -44,6 +45,7 @@ function clearDraft() {
 
 export function ContributeWizard(): JSX.Element {
   const router = useRouter();
+  const { toast } = useToast();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<GuideDraft>(EMPTY_DRAFT);
   const [submitting, setSubmitting] = useState(false);
@@ -71,6 +73,7 @@ export function ContributeWizard(): JSX.Element {
     try {
       await submitGuide(draft);
       clearDraft();
+      toast('Guide submitted for review', 'success');
       router.push(`/${draft.country}/contribute/submitted`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong. Please try again.');
