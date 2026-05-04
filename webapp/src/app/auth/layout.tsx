@@ -11,38 +11,32 @@ export default function AuthLayout({ children }: { children: React.ReactNode }):
         </Link>
       </header>
 
-      {/* Top-right — layered green + amber light */}
+      {/* Top-right — bright paper catching light */}
       <div
         aria-hidden="true"
         className="pointer-events-none fixed"
         style={{
-          top: '-20%',
-          right: '-15%',
-          width: '62vw',
-          height: '82vh',
-          borderRadius: '30% 70% 60% 40% / 40% 30% 70% 60%',
-          background: [
-            'radial-gradient(ellipse 80% 60% at 65% 30%, rgba(222,236,223,0.72) 0%, rgba(234,243,236,0.28) 40%, transparent 68%)',
-            'radial-gradient(ellipse 55% 75% at 30% 70%, rgba(251,236,208,0.45) 0%, rgba(247,243,235,0.15) 38%, transparent 62%)',
-          ].join(', '),
-          transform: 'rotate(12deg)',
+          top: '-25%',
+          right: '-20%',
+          width: '65vw',
+          height: '80vh',
+          borderRadius: '28% 72% 68% 32% / 35% 28% 72% 65%',
+          background: 'linear-gradient(222deg, rgba(255,254,252,1) 0%, rgba(255,253,249,0.72) 22%, rgba(249,246,239,0.28) 52%, transparent 78%)',
+          transform: 'rotate(8deg)',
         }}
       />
-      {/* Bottom-left — amber + green complement */}
+      {/* Bottom-left — shadow fold, warm brown */}
       <div
         aria-hidden="true"
         className="pointer-events-none fixed"
         style={{
-          bottom: '-22%',
-          left: '-14%',
-          width: '58vw',
-          height: '78vh',
-          borderRadius: '60% 40% 40% 60% / 55% 65% 35% 45%',
-          background: [
-            'radial-gradient(ellipse 75% 55% at 32% 68%, rgba(251,236,208,0.60) 0%, rgba(247,243,235,0.22) 38%, transparent 65%)',
-            'radial-gradient(ellipse 50% 65% at 68% 32%, rgba(222,236,223,0.38) 0%, rgba(234,243,236,0.14) 38%, transparent 60%)',
-          ].join(', '),
-          transform: 'rotate(12deg)',
+          bottom: '-25%',
+          left: '-20%',
+          width: '60vw',
+          height: '75vh',
+          borderRadius: '68% 32% 32% 68% / 65% 72% 28% 35%',
+          background: 'linear-gradient(42deg, rgba(192,174,142,0.90) 0%, rgba(212,196,166,0.55) 25%, rgba(232,220,200,0.20) 55%, transparent 78%)',
+          transform: 'rotate(8deg)',
         }}
       />
 
