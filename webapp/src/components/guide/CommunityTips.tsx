@@ -64,6 +64,7 @@ export default function CommunityTips({ tips: initialTips, guideId, steps, count
         <AddTipForm
           guideId={guideId}
           country={country}
+          steps={steps}
           onAdded={(tip) => setTips((prev) => [tip, ...prev])}
         />
 

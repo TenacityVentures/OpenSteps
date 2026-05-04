@@ -1,7 +1,7 @@
 'use client';
 
 import type { JSX } from 'react';
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 import { upvoteTip, removeUpvote } from '@/app/[country]/guide/[slug]/actions';
@@ -20,6 +20,11 @@ export function TipUpvoteButton({ tipId, initialCount, initiallyUpvoted, country
   const [upvoted, setUpvoted] = useState(initiallyUpvoted);
   const [count, setCount] = useState(initialCount);
   const [isPending, startTransition] = useTransition();
+
+  // Sync when parent resolves the user's upvotes asynchronously
+  useEffect(() => {
+    setUpvoted(initiallyUpvoted);
+  }, [initiallyUpvoted]);
 
   function handleClick() {
     if (!user) {
