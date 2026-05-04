@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useToast, TOAST_MESSAGES } from '@/components/ui/Toaster';
+import { Spinner } from '@/components/ui/Spinner';
 
 const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
@@ -126,7 +127,11 @@ function SignInForm(): JSX.Element {
           disabled={isPending}
           className="w-full py-2.5 rounded-lg bg-[var(--color-green)] text-white font-semibold text-sm hover:bg-[var(--color-green-mid)] transition-colors disabled:opacity-50"
         >
-          {isPending ? 'Signing in…' : 'Sign in'}
+          {isPending ? (
+            <span className="inline-flex items-center justify-center gap-2">
+              <Spinner size={14} /> Signing in…
+            </span>
+          ) : 'Sign in'}
         </button>
       </form>
 

@@ -3,6 +3,7 @@
 import type { JSX } from 'react';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/Spinner';
 import { useUser } from '@/hooks/useUser';
 import { addTip } from '@/app/[country]/guide/[slug]/actions';
 import type { Tip } from '@opensteps/types';
@@ -66,7 +67,11 @@ export function AddTipForm({ guideId, country, onAdded }: Props): JSX.Element {
             disabled={isPending}
             className="px-4 py-1.5 rounded-lg bg-[var(--color-green)] text-white text-sm font-medium hover:bg-[var(--color-green-mid)] transition-colors disabled:opacity-50"
           >
-            {isPending ? 'Adding…' : 'Add tip'}
+            {isPending ? (
+              <span className="inline-flex items-center justify-center gap-1.5">
+                <Spinner size={12} /> Adding…
+              </span>
+            ) : 'Add tip'}
           </button>
         </div>
       )}

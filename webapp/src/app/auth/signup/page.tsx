@@ -5,6 +5,7 @@ import { Suspense, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Spinner } from '@/components/ui/Spinner';
 import { COUNTRIES } from '@opensteps/constants';
 import type { CountryCode } from '@opensteps/types';
 
@@ -158,7 +159,11 @@ function SignUpForm(): JSX.Element {
           disabled={isPending}
           className="w-full py-2.5 rounded-lg bg-[var(--color-green)] text-white font-semibold text-sm hover:bg-[var(--color-green-mid)] transition-colors disabled:opacity-50"
         >
-          {isPending ? 'Creating account…' : 'Create account'}
+          {isPending ? (
+            <span className="inline-flex items-center justify-center gap-2">
+              <Spinner size={14} /> Creating account…
+            </span>
+          ) : 'Create account'}
         </button>
       </form>
 

@@ -5,6 +5,7 @@ import type { JSX } from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toaster';
+import { Spinner } from '@/components/ui/Spinner';
 import type { GuideDraft } from './types';
 import { EMPTY_DRAFT, WIZARD_STEPS } from './types';
 import { BasicsStep } from './steps/BasicsStep';
@@ -90,7 +91,7 @@ export function ContributeWizard(): JSX.Element {
   if (!mounted) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="text-sm text-[var(--color-ink-4)]">Loading draft…</div>
+        <Spinner size={28} className="text-[var(--color-green)]" />
       </div>
     );
   }

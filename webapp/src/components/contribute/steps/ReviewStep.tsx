@@ -1,5 +1,6 @@
 import type { JSX } from 'react';
 import { CATEGORY_MAP } from '@opensteps/constants';
+import { Spinner } from '@/components/ui/Spinner';
 import type { GuideDraft } from '../types';
 
 interface Props {
@@ -138,7 +139,11 @@ export function ReviewStep({ draft, onSubmit, submitting, error }: Props): JSX.E
         disabled={submitting || issues.length > 0}
         className="w-full py-3 rounded-lg bg-[var(--color-green)] text-white font-semibold text-sm hover:bg-[var(--color-green-mid)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {submitting ? 'Submitting…' : 'Submit for review →'}
+        {submitting ? (
+          <span className="inline-flex items-center justify-center gap-2">
+            <Spinner size={14} /> Submitting…
+          </span>
+        ) : 'Submit for review →'}
       </button>
     </div>
   );
