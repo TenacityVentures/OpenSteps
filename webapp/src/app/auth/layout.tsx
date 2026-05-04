@@ -11,30 +11,24 @@ export default function AuthLayout({ children }: { children: React.ReactNode }):
         </Link>
       </header>
 
-      {/* Decorative background arc */}
+      {/* Top-right blob */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed bottom-[-120px] right-[-120px]"
-        style={{ opacity: 0.045 }}
-      >
-        <svg viewBox="0 0 48 48" width={560} height={560} fill="none">
-          <path
-            d="M 6.68 34 A 20 20 0 1 1 41.32 34"
-            stroke="#225e44"
-            strokeWidth="3"
-            strokeDasharray="5.5 3.5"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <path
-            d="M 12 25 L 20 33 L 36 15"
-            stroke="#225e44"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+        className="pointer-events-none fixed -top-48 -right-48 w-[640px] h-[640px]"
+        style={{
+          borderRadius: '42% 58% 55% 45% / 40% 45% 55% 60%',
+          background: 'radial-gradient(ellipse at 55% 45%, rgba(179, 162, 128, 0.28) 0%, transparent 68%)',
+        }}
+      />
+      {/* Bottom-left blob */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed -bottom-48 -left-48 w-[580px] h-[580px]"
+        style={{
+          borderRadius: '58% 42% 45% 55% / 55% 60% 40% 45%',
+          background: 'radial-gradient(ellipse at 45% 55%, rgba(179, 162, 128, 0.22) 0%, transparent 68%)',
+        }}
+      />
 
       <main className="flex-1 flex items-center justify-center px-4 py-12 relative z-10">
         <div className="w-full max-w-sm space-y-6">
