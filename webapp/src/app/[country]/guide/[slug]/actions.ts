@@ -88,6 +88,14 @@ export async function addTip(guideId: string, text: string, stepId?: string): Pr
   return data as Tip;
 }
 
+async function syncUpvoteCount(supabase: Awaited<ReturnType<typeof createClient>>, tipId: string) {
+  const { count } = await supabase
+    .from('tip_upvotes')
+    .select('*', { count: 'exact', head: true })
+    .eq('tip_id', tipId);
+  await supabase.from('tips').update({ upvotes: count ?? 0 }).eq('id', tipId);
+}
+
 export async function upvoteTip(tipId: string): Promise<void> {
   const { supabase, user } = await requireAuth();
 
@@ -101,6 +109,7 @@ export async function upvoteTip(tipId: string): Promise<void> {
     throw new Error(error.message);
   }
 
+  await syncUpvoteCount(supabase, tipId);
   await revalidateGuideForTip(supabase, tipId);
 }
 
@@ -115,5 +124,6 @@ export async function removeUpvote(tipId: string): Promise<void> {
 
   if (error) throw new Error(error.message);
 
+  await syncUpvoteCount(supabase, tipId);
   await revalidateGuideForTip(supabase, tipId);
 }

@@ -21,10 +21,9 @@ export function TipUpvoteButton({ tipId, initialCount, initiallyUpvoted, country
   const [count, setCount] = useState(initialCount);
   const [isPending, startTransition] = useTransition();
 
-  // Sync when parent resolves the user's upvotes asynchronously
-  useEffect(() => {
-    setUpvoted(initiallyUpvoted);
-  }, [initiallyUpvoted]);
+  // Sync when parent delivers fresh server data (after revalidatePath + router.refresh)
+  useEffect(() => { setUpvoted(initiallyUpvoted); }, [initiallyUpvoted]);
+  useEffect(() => { setCount(initialCount); }, [initialCount]);
 
   function handleClick() {
     if (!user) {
