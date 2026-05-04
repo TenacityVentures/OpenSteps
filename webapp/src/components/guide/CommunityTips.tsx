@@ -82,9 +82,15 @@ export default function CommunityTips({ tips: initialTips, guideId, steps, count
               className="p-4 rounded-xl bg-white border border-[var(--color-surface3)]"
             >
               {step && (
-                <p className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-green)] mb-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    document.getElementById(`step-${step.n}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }}
+                  className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-green)] mb-1.5 hover:underline underline-offset-2 text-left block"
+                >
                   Step {step.n}: {step.title}
-                </p>
+                </button>
               )}
               <p className="font-serif text-[var(--color-ink-2)] text-base leading-relaxed italic">
                 &ldquo;{tip.text}&rdquo;

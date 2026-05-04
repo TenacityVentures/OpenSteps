@@ -1,7 +1,7 @@
 'use client';
 
 import type { JSX } from 'react';
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/Spinner';
 import { useUser } from '@/hooks/useUser';
@@ -23,6 +23,32 @@ export function AddTipForm({ guideId, country, steps, onAdded }: Props): JSX.Ele
   const [isFocused, setIsFocused] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Listen for cross-component "open tip for step N" events from StepSelectionPrompt
+  useEffect(() => {
+    function onAddTip(e: Event) {
+      const { stepId: id } = (e as CustomEvent<{ stepId: string; stepN: number }>).detail;
+      setStepId(id);
+
+      // Scroll form into view if needed, then focus
+      const el = containerRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const inView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+        if (!inView) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Delay focus until scroll settles
+          setTimeout(() => textareaRef.current?.focus(), 450);
+        } else {
+          textareaRef.current?.focus();
+        }
+      }
+    }
+    window.addEventListener('opensteps:add-tip', onAddTip);
+    return () => window.removeEventListener('opensteps:add-tip', onAddTip);
+  }, []);
 
   const showPicker = isFocused && stepId === null && steps.length > 0;
   const selectedStep = steps.find((s) => s.id === stepId) ?? null;
@@ -57,6 +83,7 @@ export function AddTipForm({ guideId, country, steps, onAdded }: Props): JSX.Ele
   }
 
   return (
+    <div ref={containerRef}>
     <form onSubmit={handleSubmit} className="space-y-2">
 
       {/* Step picker — slides in above textarea on focus */}
@@ -111,6 +138,7 @@ export function AddTipForm({ guideId, country, steps, onAdded }: Props): JSX.Ele
       )}
 
       <textarea
+        ref={textareaRef}
         className="w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-xl text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors resize-none"
         rows={2}
         value={text}
@@ -142,5 +170,6 @@ export function AddTipForm({ guideId, country, steps, onAdded }: Props): JSX.Ele
         </div>
       )}
     </form>
+    </div>
   );
 }

@@ -24,6 +24,7 @@ import CommunityTips from '@/components/guide/CommunityTips';
 import EvidenceThumbs from '@/components/guide/EvidenceThumbs';
 import RelatedGuides from '@/components/guide/RelatedGuides';
 import { VerifyBanner } from '@/components/verify/VerifyBanner';
+import { StepSelectionPrompt } from '@/components/guide/StepSelectionPrompt';
 
 export const revalidate = 300;
 
@@ -135,6 +136,7 @@ function GuidePage({
         </aside>
 
         <article className="min-w-0 space-y-10">
+          <StepSelectionPrompt steps={steps} />
           {documents.length > 0 && <WhatToBring documents={documents} />}
           <StepList steps={steps} evidence={evidence} />
           <CommunityTips
