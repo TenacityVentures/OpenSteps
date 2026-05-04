@@ -3,7 +3,7 @@
 import type { JSX } from 'react';
 import { Suspense, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { COUNTRIES } from '@opensteps/constants';
 import type { CountryCode } from '@opensteps/types';
@@ -11,7 +11,6 @@ import type { CountryCode } from '@opensteps/types';
 const inp = 'w-full px-3 py-2.5 bg-white border border-[var(--color-surface3)] rounded-[var(--radius)] text-sm text-[var(--color-ink)] placeholder:text-[var(--color-ink-4)] focus:outline-none focus:ring-2 focus:ring-[var(--color-green)] focus:border-[var(--color-green)] transition-colors';
 
 function SignUpForm(): JSX.Element {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? null;
   const activeCountries = COUNTRIES.filter((c) => c.active);
@@ -21,6 +20,7 @@ function SignUpForm(): JSX.Element {
   const [password, setPassword] = useState('');
   const [country, setCountry] = useState(activeCountries[0]?.code ?? 'sl');
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function handleSubmit(e: React.FormEvent) {
@@ -28,7 +28,7 @@ function SignUpForm(): JSX.Element {
     setError(null);
     startTransition(async () => {
       const supabase = createClient();
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -37,12 +37,43 @@ function SignUpForm(): JSX.Element {
       });
       if (error) {
         setError(error.message);
-      } else {
+      } else if (!data.session) {
+        // Email confirmation required — stay on page, show success state
         document.cookie = `preferred_country=${country};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
-        router.push(next ?? `/${country}`);
-        router.refresh();
+        setSent(true);
+      } else {
+        // Auto-confirmed (e.g. Supabase config with confirmation disabled)
+        document.cookie = `preferred_country=${country};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
+        window.location.href = next ?? `/${country}`;
       }
     });
+  }
+
+  if (sent) {
+    return (
+      <div className="space-y-6">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-[var(--color-ink)]">Check your inbox</h1>
+          <p className="text-sm text-[var(--color-ink-3)]">
+            We sent a confirmation link to <span className="font-medium text-[var(--color-ink)]">{email}</span>
+          </p>
+        </div>
+        <div className="rounded-xl bg-[var(--color-surface2)] border border-[var(--color-surface3)] px-5 py-4 space-y-1.5">
+          <p className="text-sm text-[var(--color-ink-2)]">
+            Click the link in the email to confirm your account, then sign in.
+          </p>
+          <p className="text-xs font-mono text-[var(--color-ink-4)]">
+            Check your spam folder if it doesn&apos;t arrive within a minute.
+          </p>
+        </div>
+        <Link
+          href={`/auth/signin${next ? `?next=${next}` : ''}`}
+          className="block w-full py-2.5 rounded-lg bg-[var(--color-green)] text-white font-semibold text-sm text-center hover:bg-[var(--color-green-mid)] transition-colors"
+        >
+          Go to sign in
+        </Link>
+      </div>
+    );
   }
 
   return (

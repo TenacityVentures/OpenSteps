@@ -2,6 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { sendEmail, NewTipEmail } from '@/lib/email';
 import type { Tip } from '@opensteps/types';
 
 async function requireAuth() {
@@ -35,8 +37,53 @@ export async function addTip(guideId: string, text: string, stepId?: string): Pr
 
   if (error) throw new Error(error.message);
 
-  const { data: guide } = await supabase.from('guides').select('slug, country').eq('id', guideId).single();
+  const { data: guide } = await supabase
+    .from('guides')
+    .select('slug, country, title')
+    .eq('id', guideId)
+    .single();
   if (guide) revalidatePath(`/${guide.country}/guide/${guide.slug}`);
+
+  // Notify guide contributor (skip if they're the one adding the tip)
+  if (guide) {
+    try {
+      const admin = createAdminClient();
+      const { data: feed } = await admin
+        .from('community_feed')
+        .select('actor_id')
+        .eq('guide_id', guideId)
+        .eq('type', 'contribute')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (feed?.actor_id && feed.actor_id !== user.id) {
+        const { data: { user: contributor } } = await admin.auth.admin.getUserById(feed.actor_id as string);
+        if (contributor?.email) {
+          const authorName =
+            (user.user_metadata?.['display_name'] as string | undefined) ??
+            user.email?.split('@')[0] ?? 'Someone';
+          const authorDisplay =
+            (contributor.user_metadata?.['display_name'] as string | undefined) ??
+            contributor.email.split('@')[0] ?? 'there';
+          await sendEmail({
+            to: contributor.email,
+            subject: `New tip on "${guide.title as string}"`,
+            html: NewTipEmail({
+              guideAuthorName: authorDisplay,
+              guideTitle: guide.title as string,
+              country: guide.country as string,
+              slug: guide.slug as string,
+              tipText: text.trim(),
+              tipAuthorName: authorName,
+            }),
+          });
+        }
+      }
+    } catch {
+      // Email failure must not break tip submission
+    }
+  }
 
   return data as Tip;
 }

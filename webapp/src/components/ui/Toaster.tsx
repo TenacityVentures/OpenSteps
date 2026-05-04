@@ -23,9 +23,10 @@ export function useToast() {
 
 // Short keys passed via URL search params → human-readable messages
 export const TOAST_MESSAGES: Record<string, { message: string; type: ToastType }> = {
-  verify:     { message: 'Sign in to verify guides',        type: 'info' },
-  contribute: { message: 'Sign in to contribute a guide',   type: 'info' },
-  expired:    { message: 'Session expired — please sign in', type: 'info' },
+  verify:     { message: 'Sign in to verify guides',                    type: 'info'    },
+  contribute: { message: 'Sign in to contribute a guide',               type: 'info'    },
+  expired:    { message: 'Session expired — please sign in',            type: 'info'    },
+  welcome:    { message: 'Welcome to OpenSteps — account confirmed',    type: 'success' },
 };
 
 const DOT_COLOR: Record<ToastType, string> = {

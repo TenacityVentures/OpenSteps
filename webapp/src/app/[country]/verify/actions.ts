@@ -2,6 +2,50 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendEmail, GuidePublishedEmail, VerificationMilestoneEmail } from '@/lib/email';
+
+async function notifyContributor(
+  guideId: string,
+  emailFn: (args: { email: string; displayName: string; slug: string; country: string; guideTitle: string }) => void,
+) {
+  try {
+    const admin = createAdminClient();
+    const { data: feed } = await admin
+      .from('community_feed')
+      .select('actor_id')
+      .eq('guide_id', guideId)
+      .eq('type', 'contribute')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single();
+    if (!feed?.actor_id) return;
+
+    const { data: guide } = await admin
+      .from('guides')
+      .select('slug, country, title')
+      .eq('id', guideId)
+      .single();
+    if (!guide) return;
+
+    const { data: { user } } = await admin.auth.admin.getUserById(feed.actor_id as string);
+    if (!user?.email) return;
+
+    const displayName =
+      (user.user_metadata?.['display_name'] as string | undefined) ??
+      user.email.split('@')[0] ??
+      'there';
+
+    emailFn({
+      email: user.email,
+      displayName,
+      slug: guide.slug as string,
+      country: guide.country as string,
+      guideTitle: guide.title as string,
+    });
+  } catch {
+    // Email failure must never break the action
+  }
+}
 
 async function requireAuth() {
   const supabase = await createClient();
@@ -38,6 +82,22 @@ export async function communityVerify(guideId: string, note?: string): Promise<v
 
   // Update verifier stats
   await supabase.rpc('increment_verification_count' as never, { user_id: user.id }).maybeSingle();
+
+  // Check if this was the 5th verification — DB trigger auto-publishes at 5
+  const { count } = await supabase
+    .from('guide_verifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('guide_id', guideId);
+
+  if (count === 5) {
+    notifyContributor(guideId, ({ email, displayName, slug, country, guideTitle }) => {
+      sendEmail({
+        to: email,
+        subject: 'Your guide just went live on OpenSteps',
+        html: VerificationMilestoneEmail({ displayName, guideTitle, country, slug }),
+      });
+    });
+  }
 }
 
 /** Editor: immediately publish the guide */
@@ -61,6 +121,15 @@ export async function editorApprove(guideId: string): Promise<void> {
     guide_id: guideId,
     actor_id: user.id,
     description: 'Guide approved and published by editor',
+  });
+
+  // Notify contributor
+  notifyContributor(guideId, ({ email, displayName, slug, country, guideTitle }) => {
+    sendEmail({
+      to: email,
+      subject: 'Your guide is live on OpenSteps',
+      html: GuidePublishedEmail({ displayName, guideTitle, country, slug }),
+    });
   });
 }
 

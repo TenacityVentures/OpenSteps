@@ -26,20 +26,36 @@ function SignInForm(): JSX.Element {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [unconfirmed, setUnconfirmed] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isResending, startResend] = useTransition();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setUnconfirmed(false);
     startTransition(async () => {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        setError(error.message);
+        if (error.message.toLowerCase().includes('email not confirmed')) {
+          setUnconfirmed(true);
+        } else {
+          setError(error.message);
+        }
       } else {
         router.push(next);
         router.refresh();
       }
+    });
+  }
+
+  function handleResend() {
+    startResend(async () => {
+      const supabase = createClient();
+      await supabase.auth.resend({ type: 'signup', email });
+      setResendSent(true);
     });
   }
 
@@ -61,7 +77,7 @@ function SignInForm(): JSX.Element {
             autoComplete="email"
             className={inp}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setUnconfirmed(false); }}
             placeholder="you@example.com"
           />
         </div>
@@ -83,6 +99,26 @@ function SignInForm(): JSX.Element {
 
         {error && (
           <p className="text-sm text-[var(--color-red)]">{error}</p>
+        )}
+
+        {unconfirmed && (
+          <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 space-y-2">
+            <p className="text-sm text-amber-800">
+              This email hasn&apos;t been confirmed yet. Check your inbox for the confirmation link.
+            </p>
+            {resendSent ? (
+              <p className="text-xs font-mono text-amber-700">Confirmation email resent.</p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={isResending}
+                className="text-xs font-mono text-amber-700 underline underline-offset-2 hover:text-amber-900 disabled:opacity-50"
+              >
+                {isResending ? 'Sending…' : 'Resend confirmation email'}
+              </button>
+            )}
+          </div>
         )}
 
         <button
