@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { GuideDraft } from '@/components/contribute/types';
+import { sendEmail, GuideSubmittedEmail } from '@/lib/email';
 
 function toSlug(title: string): string {
   return title
@@ -106,6 +107,20 @@ export async function submitGuide(draft: GuideDraft): Promise<{ slug: string }> 
     actor_id: user.id,
     description: `${user.user_metadata?.display_name ?? 'Someone'} submitted a new guide: ${draft.title.trim()}`,
   });
+
+  // Confirmation email — non-blocking, failure never surfaces to user
+  if (user.email) {
+    const displayName = (user.user_metadata?.display_name as string | undefined) ?? user.email.split('@')[0] ?? 'there';
+    await sendEmail({
+      to: user.email,
+      subject: `Your guide "${draft.title.trim()}" is in review`,
+      html: GuideSubmittedEmail({
+        displayName,
+        guideTitle: draft.title.trim(),
+        country: draft.country || 'sl',
+      }),
+    });
+  }
 
   return { slug: guide.slug as string };
 }
